@@ -16,5 +16,17 @@ cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('GAGN
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('DUBOIS', 'Charlotte', '789, Rue des Roses, 13005 Marseille'))
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('LEFEVRE', 'Thomas', '333, Rue de la Paix, 75002 Paris'))
 
+
+cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('admin', 'admin123', 'admin'))
+cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('user', '12345', 'user'))
+
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Le Petit Prince', 'Antoine de Saint-Exupéry', 5))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('1984', 'George Orwell', 3))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Les Misérables', 'Victor Hugo', 2))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Harry Potter à l\'école des sorciers', 'J.K. Rowling', 4))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Le Seigneur des Anneaux', 'J.R.R. Tolkien', 1))
+
+
 connection.commit()
 connection.close()
+*print("Base de données bibliothèque initialisée !")
