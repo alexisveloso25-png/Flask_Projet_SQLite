@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Recherche client par nom</h2>
+
+<form method="post">
+    <input type="text" name="nom" placeholder="Nom du client" required>
+    <button type="submit">Rechercher</button>
+</form>
+
+{% if data %}
+<ul>
+{% for client in data %}
+    <li>
+        ID {{ client[0] }} - {{ client[2] }} {{ client[3] }}
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
+</body>
+</html>
