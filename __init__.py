@@ -43,16 +43,27 @@ def lecture():
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
-        # Vérifier les identifiants
-        if request.form['username'] == 'admin' and request.form['password'] == 'password': # password à cacher par la suite
+        username = request.form['username']
+        password = request.form['password']
+
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, username, role FROM users WHERE username=? AND password=?", (username, password))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user:
             session['authentifie'] = True
-            # Rediriger vers la route lecture après une authentification réussie
-            return redirect(url_for('lecture'))
+            session['username'] = user[1]
+            session['role'] = user[2]
+            session['user_id'] = user[0]
+            return redirect(url_for('liste_livres'))
         else:
-            # Afficher un message d'erreur si les identifiants sont incorrects
             return render_template('formulaire_authentification.html', error=True)
 
+    # Si GET → affiche le formulaire
     return render_template('formulaire_authentification.html', error=False)
+
 
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
