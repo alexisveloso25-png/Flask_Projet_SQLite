@@ -4,6 +4,21 @@ from flask import json
 from urllib.request import urlopen
 from werkzeug.utils import secure_filename
 import sqlite3
+from flask import request, Response
+
+USER_LOGIN = "user"
+USER_PASSWORD = "12345"
+
+def require_user_auth():
+    # Vérifie une authentification Basic Auth user/12345.
+    auth = request.authorization
+    if not auth or not (auth.username == USER_LOGIN and auth.password == USER_PASSWORD):
+        return Response(
+            "Accès refusé (auth user requise)",
+            401,
+            {"WWW-Authenticate": 'Basic realm="User Area"'}
+        )
+    return None
 
 app = Flask(__name__)                                                                                                                  
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
@@ -11,8 +26,6 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
 # Fonction pour créer une clé "authentifie" dans la session utilisateur
 def est_authentifie():
     return session.get('authentifie')
-    return session.get('user_auth')
-
 
 @app.route('/')
 def hello_world():
@@ -60,45 +73,6 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-@app.route('/fiche_nom/', methods=['GET', 'POST'])
-def fiche_nom():
-    if not est_user_authentifie():
-        return redirect(url_for('auth_user'))
-
-    data = []
-
-    if request.method == 'POST':
-        nom = request.form['nom']
-
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        cursor.execute(
-            'SELECT * FROM clients WHERE nom LIKE ?',
-            ('%' + nom + '%',)
-        )
-        data = cursor.fetchall()
-        conn.close()
-
-    return render_template('fiche_nom.html', data=data)
-
-
-@app.route('/auth_user', methods=['GET', 'POST'])
-def auth_user():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        if username == 'user' and password == '12345':
-            session['user_auth'] = True
-            return redirect(url_for('fiche_nom'))
-        else:
-            return render_template('auth_user.html', error=True)
-
-    return render_template('auth_user.html', error=False)
-
-
-
-
 @app.route('/enregistrer_client', methods=['GET'])
 def formulaire_client():
     return render_template('formulaire.html')  # afficher le formulaire
@@ -112,11 +86,42 @@ def enregistrer_client():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Exécution de la requête SQL pour insérer un nouveau client
+  
     cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
     conn.commit()
     conn.close()
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
-                                                                                                                                       
+
+@app.route('/fiche_nom/', methods=['GET', 'POST'])
+def fiche_nom():
+    # Protection user/12345 (Basic Auth)
+    deny = require_user_auth()
+    if deny:
+        return deny
+
+    nom = ""
+    if request.method == 'POST':
+        nom = request.form.get('nom', '').strip()
+    else:
+        nom = request.args.get('nom', '').strip()
+
+    if not nom:
+        return """
+        <h2>Recherche client par nom</h2>
+        <form method="POST">
+            <label>Nom :</label>
+            <input name="nom" placeholder="Ex: DUPONT" required>
+            <button type="submit">Rechercher</button>
+        </form>
+        <p>Astuce: tu peux aussi utiliser /fiche_nom/?nom=DUPONT</p>
+        """
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', (f"%{nom}%",))
+    data = cursor.fetchall()
+    conn.close()
+
+    return render_template('read_data.html', data=data)
+
 if __name__ == "__main__":
   app.run(debug=True)
