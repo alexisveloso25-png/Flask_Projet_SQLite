@@ -58,24 +58,7 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-@app.route('/fiche_nom/', methods=['GET', 'POST'])
-def fiche_nom():
-    # Vérification de la protection (Exercice 2)
-    if not session.get('user_authentifie'):
-        return redirect(url_for('login_user'))
 
-    resultats = []
-    if request.method == 'POST':
-        nom_cherche = request.form.get('nom_client')
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        # Recherche SQL par nom
-        cursor.execute("SELECT * FROM clients WHERE nom LIKE ?", ('%' + nom_cherche + '%',))
-        resultats = cursor.fetchall()
-        conn.close()
-
-    # On affiche le formulaire et les résultats
-    return render_template('exemples', data=resultats)
 
 
 @app.route('/enregistrer_client', methods=['GET'])
