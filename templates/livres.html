@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des livres</title>
+</head>
+<body>
+<h1>Liste des livres disponibles</h1>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Titre</th>
+        <th>Auteur</th>
+        <th>Stock</th>
+        <th>Action</th>
+    </tr>
+    {% for livre in livres %}
+    <tr>
+        <td>{{ livre[0] }}</td>
+        <td>{{ livre[1] }}</td>
+        <td>{{ livre[2] }}</td>
+        <td>{{ livre[3] }}</td>
+        <td>
+            {% if livre[3] > 0 %}
+            <form action="{{ url_for('emprunter_livre', livre_id=livre[0]) }}" method="POST">
+                <button type="submit">Emprunter</button>
+            </form>
+            {% else %}
+            Indisponible
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% if session.role == 'admin' %}
+<p><a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a></p>
+{% endif %}
+
+</body>
+</html>
