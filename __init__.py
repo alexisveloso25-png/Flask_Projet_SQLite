@@ -11,6 +11,8 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
 # Fonction pour créer une clé "authentifie" dans la session utilisateur
 def est_authentifie():
     return session.get('authentifie')
+    return session.get('user_auth')
+
 
 @app.route('/')
 def hello_world():
@@ -76,6 +78,21 @@ def fiche_nom():
         conn.close()
 
     return render_template('fiche_nom.html', data=data)
+
+@app.route('/auth_user', methods=['GET', 'POST'])
+def auth_user():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if username == 'user' and password == '12345':
+            session['user_auth'] = True
+            return redirect(url_for('fiche_nom'))
+        else:
+            return render_template('auth_user.html', error=True)
+
+    return render_template('auth_user.html', error=False)
+
 
 
 
