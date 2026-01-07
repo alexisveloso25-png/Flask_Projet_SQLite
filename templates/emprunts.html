@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mes emprunts</title>
+</head>
+<body>
+<h1>Mes livres empruntés</h1>
+
+<table border="1">
+    <tr>
+        <th>Livre</th>
+        <th>Date d'emprunt</th>
+        <th>Date de retour</th>
+    </tr>
+    {% for e in emprunts %}
+    <tr>
+        <td>{{ e[0] }}</td>
+        <td>{{ e[1] }}</td>
+        <td>{{ e[2] if e[2] else 'Non retourné' }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<p><a href="{{ url_for('liste_livres') }}">Retour à la liste des livres</a></p>
+</body>
+</html>
