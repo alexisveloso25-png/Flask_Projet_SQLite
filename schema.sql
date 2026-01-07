@@ -6,3 +6,30 @@ CREATE TABLE clients (
     prenom TEXT NOT NULL,
     adresse TEXT NOT NULL
 );
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT NOT NULL  -- admin ou user
+);
+
+DROP TABLE IF EXISTS livres;
+CREATE TABLE livres (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titre TEXT NOT NULL,
+    auteur TEXT NOT NULL,
+    stock INTEGER NOT NULL
+);
+
+DROP TABLE IF EXISTS emprunts;
+CREATE TABLE emprunts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    livre_id INTEGER NOT NULL,
+    date_emprunt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_retour TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id),
+    FOREIGN KEY(livre_id) REFERENCES livres(id)
+);
