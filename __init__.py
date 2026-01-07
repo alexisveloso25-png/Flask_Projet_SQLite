@@ -82,11 +82,11 @@ def enregistrer_client():
     nom = request.form['nom']
     prenom = request.form['prenom']
 
-    # Connexion à la base de données
+   
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-  
+
     cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
     conn.commit()
     conn.close()
@@ -99,12 +99,14 @@ def fiche_nom():
     if deny:
         return deny
 
+  
     nom = ""
     if request.method == 'POST':
         nom = request.form.get('nom', '').strip()
     else:
         nom = request.args.get('nom', '').strip()
 
+    # Si aucun nom fourni, afficher un petit formulaire
     if not nom:
         return """
         <h2>Recherche client par nom</h2>
@@ -115,12 +117,15 @@ def fiche_nom():
         </form>
         <p>Astuce: tu peux aussi utiliser /fiche_nom/?nom=DUPONT</p>
         """
+
+  
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', (f"%{nom}%",))
     data = cursor.fetchall()
     conn.close()
 
+    
     return render_template('read_data.html', data=data)
 
 if __name__ == "__main__":
