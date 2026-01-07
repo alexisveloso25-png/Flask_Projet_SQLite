@@ -196,6 +196,29 @@ def mes_emprunts():
     conn.close()
     return render_template('emprunts.html', emprunts=emprunts)
 
+@app.route('/livres/recherche', methods=['GET','POST'])
+def recherche_livres():
+    titre = request.form.get('titre') if request.method == 'POST' else request.args.get('titre')
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM livres WHERE titre LIKE ?', (f"%{titre}%",))
+    livres = cursor.fetchall()
+    conn.close()
+    return render_template('livres.html', livres=livres)
+
+@app.route('/livres/supprimer/<int:livre_id>', methods=['POST'])
+def supprimer_livre(livre_id):
+    if session.get('role') != 'admin':
+        return "<h3>Accès refusé : admin uniquement</h3>"
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM livres WHERE id = ?', (livre_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('liste_livres'))
+
+
+
 # --------------------------
 # Lancer l'application
 # --------------------------
