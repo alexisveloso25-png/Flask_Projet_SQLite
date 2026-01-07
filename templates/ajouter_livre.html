@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un livre</title>
+</head>
+<body>
+<h1>Ajouter un livre</h1>
+
+<form method="POST">
+    <label>Titre :</label>
+    <input type="text" name="titre" required><br>
+
+    <label>Auteur :</label>
+    <input type="text" name="auteur" required><br>
+
+    <label>Stock :</label>
+    <input type="number" name="stock" min="1" required><br>
+
+    <button type="submit">Ajouter</button>
+</form>
+
+<p><a href="{{ url_for('liste_livres') }}">Retour à la liste des livres</a></p>
+</body>
+</html>
