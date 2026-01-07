@@ -75,7 +75,7 @@ def fiche_nom():
         conn.close()
 
     # On affiche le formulaire et les résultats
-    return render_template('recherche_nom.html', data=resultats)
+    return render_template('exemples', data=resultats)
 
 
 @app.route('/enregistrer_client', methods=['GET'])
