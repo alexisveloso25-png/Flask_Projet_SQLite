@@ -29,4 +29,4 @@ cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Le S
 
 connection.commit()
 connection.close()
-*print("Base de données bibliothèque initialisée !")
+print("Base de données bibliothèque initialisée !")
