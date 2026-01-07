@@ -59,28 +59,26 @@ def ReadBDD():
     return render_template('read_data.html', data=data)
 
 
-@app.route('/fiche_nom/', methods=['GET'])
-def fiche_nom_form():
-    if not est_authentifie():
-        return redirect(url_for('authentification_user'))
+@app.route('/fiche_nom/', methods=['GET', 'POST'])
+def fiche_nom():
+    if not est_user_authentifie():
+        return redirect(url_for('auth_user'))
 
-    return render_template('formulaire_recherche_nom.html')
+    data = []
+    if request.method == 'POST':
+        nom = request.form['nom']
 
-@app.route('/fiche_nom/', methods=['POST'])
-def fiche_nom_result():
-    if not est_authentifie():
-        return redirect(url_for('authentification_user'))
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute(
+            'SELECT * FROM clients WHERE nom LIKE ?',
+            ('%' + nom + '%',)
+        )
+        data = cursor.fetchall()
+        conn.close()
 
-    nom = request.form['nom']
+    return render_template('fiche_nom.html', data=data)
 
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM clients WHERE nom LIKE ?", ('%' + nom + '%',))
-    data = cursor.fetchall()
-    conn.close()
-
-    return render_template('read_data.html', data=data)
 
 
 @app.route('/enregistrer_client', methods=['GET'])
