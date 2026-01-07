@@ -43,27 +43,16 @@ def lecture():
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT id, username, role FROM users WHERE username=? AND password=?", (username, password))
-        user = cursor.fetchone()
-        conn.close()
-
-        if user:
+        # Vérifier les identifiants
+        if request.form['username'] == 'admin' and request.form['password'] == 'password': # password à cacher par la suite
             session['authentifie'] = True
-            session['username'] = user[1]
-            session['role'] = user[2]
-            session['user_id'] = user[0]
-            return redirect(url_for('liste_livres'))
+            # Rediriger vers la route lecture après une authentification réussie
+            return redirect(url_for('lecture'))
         else:
+            # Afficher un message d'erreur si les identifiants sont incorrects
             return render_template('formulaire_authentification.html', error=True)
 
-    # Si GET → affiche le formulaire
     return render_template('formulaire_authentification.html', error=False)
-
 
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
@@ -139,54 +128,6 @@ def fiche_nom():
     
     return render_template('read_data.html', data=data)
 
-
-@app.route('/livres/')
-def liste_livres():
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM livres')
-    livres = cursor.fetchall()
-    conn.close()
-    return render_template('livres.html', livres=livres)
-
-@app.route('/livres/ajouter', methods=['GET', 'POST'])
-def ajouter_livre():
-    if not est_authentifie() or session.get('role') != 'admin':
-        return redirect(url_for('authentification'))
-    if request.method == 'POST':
-        titre = request.form['titre']
-        auteur = request.form['auteur']
-        stock = int(request.form['stock'])
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)', (titre, auteur, stock))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('liste_livres'))
-    return render_template('ajouter_livre.html')
-
-
-@app.route('/livres/emprunter/<int:livre_id>', methods=['POST'])
-def emprunter_livre(livre_id):
-    if not est_authentifie():
-        return redirect(url_for('authentification'))
-
-    user_id = session.get('user_id')  # on doit stocker l'id user dans la session
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-
-cursor.execute('SELECT stock FROM livres WHERE id = ?', (livre_id,))
-    livre = cursor.fetchone()
-    if not livre or livre[0] <= 0:
-        conn.close()
-        return "<h3>Livre non disponible</h3>"
-
-  cursor.execute('INSERT INTO emprunts (user_id, livre_id) VALUES (?, ?)', (user_id, livre_id))
-
-    cursor.execute('UPDATE livres SET stock = stock - 1 WHERE id = ?', (livre_id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('liste_livres'))
-
 if __name__ == "__main__":
   app.run(debug=True)
+
