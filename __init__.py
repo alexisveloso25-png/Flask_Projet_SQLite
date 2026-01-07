@@ -61,10 +61,8 @@ def ReadBDD():
 
 @app.route('/fiche_nom/', methods=['GET', 'POST'])
 def fiche_nom():
-    if not est_user_authentifie():
-        return redirect(url_for('auth_user'))
-
     data = []
+
     if request.method == 'POST':
         nom = request.form['nom']
 
