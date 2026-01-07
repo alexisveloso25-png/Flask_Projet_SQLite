@@ -60,9 +60,11 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-
 @app.route('/fiche_nom/', methods=['GET', 'POST'])
 def fiche_nom():
+    if not est_user_authentifie():
+        return redirect(url_for('auth_user'))
+
     data = []
 
     if request.method == 'POST':
@@ -78,6 +80,7 @@ def fiche_nom():
         conn.close()
 
     return render_template('fiche_nom.html', data=data)
+
 
 @app.route('/auth_user', methods=['GET', 'POST'])
 def auth_user():
