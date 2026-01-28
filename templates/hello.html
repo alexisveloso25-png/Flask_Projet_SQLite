@@ -3,37 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <title>Accueil - Bibliothèque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 30px 20px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            text-decoration: none;
+            color: #4CAF50;
+            margin: 0 15px;
+            font-weight: bold;
+            padding: 8px 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        nav a:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .bibliotheque-img {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .identifiants {
+            margin: 30px auto;
+            text-align: left;
+            display: inline-block;
+            background: #fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .identifiants h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .identifiants p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Bienvenue à la Bibliothèque</h1>
+    </header>
 
-<h1>Bienvenue sur la bibliothèque !</h1>
+    <img src="https://cdn.pixabay.com/photo/2016/11/18/16/04/library-1839416_1280.jpg" 
+         alt="Bibliothèque" class="bibliotheque-img">
 
-<p>Utilisez les liens ci-dessous pour naviguer :</p>
-<ul>
-    <li><a href="{{ url_for('liste_livres') }}">Liste des livres</a></li>
-    <li><a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a></li>
-    <li><a href="{{ url_for('ajouter_livre') }}">Ajouter un livre (Admin)</a></li>
-    <li><a href="{{ url_for('enregistrer_client') }}">Ajouter un client</a></li>
-</ul>
+    <nav>
+        <a href="{{ url_for('liste_livres') }}">Livres</a>
+        <a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a>
+        <a href="{{ url_for('ajouter_utilisateur') }}">Ajouter utilisateur</a>
+    </nav>
 
-<h2>Comptes utilisateurs pour tester</h2>
-<table border="1">
-    <tr>
-        <th>Rôle</th>
-        <th>Nom d'utilisateur</th>
-        <th>Mot de passe</th>
-    </tr>
-    <tr>
-        <td>Admin</td>
-        <td>admin</td>
-        <td>admin123</td>
-    </tr>
-    <tr>
-        <td>Utilisateur</td>
-        <td>user</td>
-        <td>12345</td>
-    </tr>
-</table>
-
+    <div class="identifiants">
+        <h2>Identifiants de test :</h2>
+        <p><strong>Admin :</strong> username = admin | password = admin123</p>
+        <p><strong>Utilisateur :</strong> username = user | password = 12345</p>
+    </div>
 </body>
 </html>
