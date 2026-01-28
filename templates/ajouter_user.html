@@ -1,28 +1,62 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Ajouter un utilisateur</title>
+<meta charset="UTF-8">
+<title>Ajouter un utilisateur</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; text-align: center; }
+header { background: #2E8B57; color: white; padding: 25px 0; margin-bottom: 20px; }
+header h1 { margin: 0; }
+nav a { text-decoration: none; color: #2E8B57; margin: 0 10px; font-weight: bold; padding: 8px 15px; border: 2px solid #2E8B57; border-radius: 5px; transition: 0.3s; }
+nav a:hover { background: #2E8B57; color: white; }
+.form-container {
+    background: white;
+    display: inline-block;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.form-container h2 { color: #2E8B57; margin-top: 0; }
+input, select, button {
+    padding: 10px;
+    margin: 8px 0;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+select { cursor: pointer; }
+button {
+    background: #2E8B57;
+    color: white;
+    border: 2px solid #2E8B57;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+button:hover { background: #1f5f3b; border-color: #1f5f3b; }
+</style>
 </head>
 <body>
-<h1>Ajouter un utilisateur</h1>
+<header><h1>Ajouter un utilisateur</h1></header>
 
+<nav>
+    <a href="{{ url_for('hello_world') }}">Accueil</a>
+    <a href="{{ url_for('liste_livres') }}">Livres</a>
+</nav>
+
+<div class="form-container">
+<h2>Formulaire d'ajout</h2>
 <form method="POST">
-    <label>Nom d'utilisateur :</label>
-    <input type="text" name="username" required><br>
-
-    <label>Mot de passe :</label>
-    <input type="password" name="password" required><br>
-
-    <label>Rôle :</label>
-    <select name="role">
+    <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+    <input type="password" name="password" placeholder="Mot de passe" required>
+    <select name="role" required>
+        <option value="">Sélectionner le rôle</option>
         <option value="user">Utilisateur</option>
-        <option value="admin">Admin</option>
-    </select><br>
-
-    <button type="submit">Ajouter</button>
+        <option value="admin">Administrateur</option>
+    </select>
+    <button type="submit">Ajouter l'utilisateur</button>
 </form>
-
-<p><a href="{{ url_for('liste_livres') }}">Retour à la liste des livres</a></p>
+</div>
 </body>
 </html>
