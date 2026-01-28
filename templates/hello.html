@@ -1,3 +1,39 @@
-<!doctype html>
-<title>Flask Server</title>
-<h1> Hello from Flask Server !</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil - Bibliothèque</title>
+</head>
+<body>
+
+<h1>Bienvenue sur la bibliothèque !</h1>
+
+<p>Utilisez les liens ci-dessous pour naviguer :</p>
+<ul>
+    <li><a href="{{ url_for('liste_livres') }}">Liste des livres</a></li>
+    <li><a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a></li>
+    <li><a href="{{ url_for('ajouter_livre') }}">Ajouter un livre (Admin)</a></li>
+    <li><a href="{{ url_for('enregistrer_client') }}">Ajouter un client</a></li>
+</ul>
+
+<h2>Comptes utilisateurs pour tester</h2>
+<table border="1">
+    <tr>
+        <th>Rôle</th>
+        <th>Nom d'utilisateur</th>
+        <th>Mot de passe</th>
+    </tr>
+    <tr>
+        <td>Admin</td>
+        <td>admin</td>
+        <td>admin123</td>
+    </tr>
+    <tr>
+        <td>Utilisateur</td>
+        <td>user</td>
+        <td>12345</td>
+    </tr>
+</table>
+
+</body>
+</html>
