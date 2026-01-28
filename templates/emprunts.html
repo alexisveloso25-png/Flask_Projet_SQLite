@@ -5,23 +5,41 @@
     <title>Mes emprunts</title>
 </head>
 <body>
+
+<nav>
+    <a href="{{ url_for('hello_world') }}">Accueil</a> |
+    <a href="{{ url_for('liste_livres') }}">Livres</a>
+</nav>
+
 <h1>Mes livres empruntés</h1>
 
 <table border="1">
     <tr>
         <th>Livre</th>
         <th>Date d'emprunt</th>
-        <th>Date de retour</th>
+        <th>Statut</th>
     </tr>
+
     {% for e in emprunts %}
     <tr>
         <td>{{ e[0] }}</td>
         <td>{{ e[1] }}</td>
-        <td>{{ e[2] if e[2] else 'Non retourné' }}</td>
+        <td>
+            {% if e[2] %}
+                Retourné le {{ e[2] }}
+            {% else %}
+                En cours
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="3">Aucun emprunt</td>
     </tr>
     {% endfor %}
 </table>
 
-<p><a href="{{ url_for('liste_livres') }}">Retour à la liste des livres</a></p>
+<p><a href="{{ url_for('liste_livres') }}">← Retour à la liste des livres</a></p>
+
 </body>
 </html>
