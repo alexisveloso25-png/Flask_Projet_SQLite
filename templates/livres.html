@@ -1,24 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Tableau de bord Bibliothèque</title>
+    <title>Liste des livres</title>
 </head>
 <body>
 
-<h1>Bienvenue sur la bibliothèque !</h1>
-
 <nav>
-    <ul>
-        <li><a href="{{ url_for('liste_livres') }}">📚 Liste des livres</a></li>
-        <li><a href="{{ url_for('mes_emprunts') }}">📖 Mes emprunts</a></li>
-        {% if session.get('role') == 'admin' %}
-        <li><a href="{{ url_for('ajouter_livre') }}">➕ Ajouter un livre</a></li>
-        <li><a href="{{ url_for('users') }}">👥 Gestion des utilisateurs</a></li>
-        {% endif %}
-        <li><a href="{{ url_for('logout') }}">🔒 Se déconnecter</a></li>
-    </ul>
+    <a href="{{ url_for('hello_world') }}">Accueil</a> |
+    <a href="{{ url_for('liste_livres') }}">Livres</a> |
+    <a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a>
 </nav>
 
+<h1>Liste des livres disponibles</h1>
+
+<!-- Recherche -->
+<form method="POST" action="{{ url_for('recherche_livres') }}">
+    <input type="text" name="titre" placeholder="Rechercher un livre">
+    <button type="submit">Rechercher</button>
+</form>
+
+<br>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Titre</th>
+        <th>Auteur</th>
+        <th>Stock</th>
+        <th>Action</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for livre in livres %}
+    <tr>
+        <td>{{ livre[0] }}</td>
+        <td>{{ livre[1] }}</td>
+        <td>{{ livre[2] }}</td>
+        <td>{{ livre[3] }}</td>
+        <td>
+            {% if livre[3] > 0 %}
+            <form action="{{ url_for('emprunter_livre', livre_id=livre[0]) }}" method="POST">
+                {{ livre[3] }} disponible(s)
+            {% else %}
+                Rupture
+            {% endif %}
+        </td>
+        <td>
+            {% if livre[3] > 0 %}
+            <form action="{{ url_for('emprunter_livre', livre_id=livre[0]) }}" method="POST" style="display:inline;">
+                <button type="submit">Emprunter</button>
+            </form>
+            {% else %}
+            Indisponible
+            {% endif %}
+
+            {% if session.get('role') == 'admin' %}
+            <form action="{{ url_for('supprimer_livre', livre_id=livre[0]) }}" method="POST" style="display:inline;">
+                <button type="submit">Supprimer</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="5">Aucun livre trouvé</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% if session['role'] == 'admin' %}
+<p><a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a></p>
+{% if session.get('role') == 'admin' %}
+<p><a href="{{ url_for('ajouter_livre') }}">➕ Ajouter un livre</a></p>
+{% endif %}
+    
+
 </body>
-</html>
