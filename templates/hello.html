@@ -1,24 +1,3 @@
 <!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Tableau de bord Bibliothèque</title>
-</head>
-<body>
-
-<h1>Bienvenue sur la bibliothèque !</h1>
-
-<nav>
-    <ul>
-        <li><a href="{{ url_for('liste_livres') }}">📚 Liste des livres</a></li>
-        <li><a href="{{ url_for('mes_emprunts') }}">📖 Mes emprunts</a></li>
-        {% if session.get('role') == 'admin' %}
-        <li><a href="{{ url_for('ajouter_livre') }}">➕ Ajouter un livre</a></li>
-        <li><a href="{{ url_for('users') }}">👥 Gestion des utilisateurs</a></li>
-        {% endif %}
-        <li><a href="{{ url_for('logout') }}">🔒 Se déconnecter</a></li>
-    </ul>
-</nav>
-
-</body>
-</html>
+<title>Flask Server</title>
+<h1> Hello from Flask Server !</h1>
