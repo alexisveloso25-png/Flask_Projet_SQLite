@@ -3,80 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <title>Accueil - Bibliothèque</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Reset minimal */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f7;
+            margin: 0;
+            padding: 0;
+            background: #eef2f7;
             color: #333;
-            text-align: center;
         }
 
         header {
             background: linear-gradient(90deg, #4CAF50, #2E7D32);
-            color: white;
-            padding: 30px 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         header h1 {
-            font-size: 2.5em;
+            font-size: 2.8em;
             margin-bottom: 10px;
         }
 
-        nav {
-            margin: 20px 0;
+        header p {
+            font-size: 1.2em;
         }
 
-        nav a {
-            text-decoration: none;
-            color: #fff;
-            margin: 0 15px;
-            font-weight: bold;
-            padding: 10px 20px;
-            border-radius: 8px;
-            background-color: #4CAF50;
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #fff;
+            flex: 1 1 200px;
+            max-width: 220px;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
             transition: 0.3s;
         }
 
-        nav a:hover {
-            background-color: #2E7D32;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        .btn-auth {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 8px 20px;
-            border-radius: 6px;
-            background-color: #2196F3;
-            color: white;
-            font-weight: bold;
+        .card i {
+            font-size: 3em;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .card a {
             text-decoration: none;
-        }
-
-        .btn-auth:hover {
-            background-color: #0b7dda;
-        }
-
-        .bibliotheque-img {
-            width: 90%;
-            max-width: 900px;
-            margin: 20px auto;
+            color: #333;
+            font-weight: bold;
             display: block;
-            border-radius: 15px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .card a:hover {
+            color: #2E7D32;
         }
 
         .identifiants {
-            margin: 30px auto;
-            text-align: left;
-            display: inline-block;
             background: #fff;
-            padding: 20px 30px;
+            padding: 25px 35px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto 50px auto;
+            text-align: left;
         }
 
         .identifiants h2 {
@@ -85,44 +95,95 @@
         }
 
         .identifiants p {
-            margin: 8px 0;
+            margin: 6px 0;
             font-size: 1.1em;
         }
 
+        .bibliotheque-img {
+            width: 100%;
+            max-width: 900px;
+            border-radius: 15px;
+            margin: 25px auto;
+            display: block;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
         footer {
-            margin-top: 50px;
+            text-align: center;
+            padding: 20px 0;
             font-size: 0.9em;
             color: #666;
+            background: #fff;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
         }
+
+        .btn-auth {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 25px;
+            border-radius: 8px;
+            background-color: #2196F3;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-auth:hover {
+            background-color: #0b7dda;
+        }
+
     </style>
 </head>
 <body>
     <header>
-        <h1>Bienvenue à la Bibliothèque</h1>
+        <h1>Bibliothèque en Ligne</h1>
         <p>Découvrez nos livres et gérez vos emprunts facilement</p>
     </header>
 
-    <!-- Image de bibliothèque fiable -->
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Library_in_Belgium.jpg"
-         alt="Bibliothèque" class="bibliotheque-img">
+    <div class="container">
 
-    <nav>
-        <a href="{{ url_for('liste_livres') }}">Livres</a>
-        <a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a>
-        <a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
-        <a href="{{ url_for('ajouter_user') }}">Ajouter utilisateur</a>
-    </nav>
+        <!-- Image de bibliothèque -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Reading_room_library.jpg" 
+             alt="Bibliothèque" class="bibliotheque-img">
 
-    <a href="{{ url_for('authentification') }}" class="btn-auth">Se connecter</a>
+        <!-- Cartes avec liens -->
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-book"></i>
+                <a href="{{ url_for('liste_livres') }}">Livres</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-book-reader"></i>
+                <a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-user-plus"></i>
+                <a href="{{ url_for('ajouter_user') }}">Ajouter utilisateur</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-plus-circle"></i>
+                <a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
+            </div>
+        </div>
 
-    <div class="identifiants">
-        <h2>Identifiants de test :</h2>
-        <p><strong>Admin :</strong> username = admin | password = admin123</p>
-        <p><strong>Utilisateur :</strong> username = user | password = 12345</p>
+        <!-- Bouton connexion -->
+        <a href="{{ url_for('authentification') }}" class="btn-auth">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+        </a>
+
+        <!-- Identifiants de test -->
+        <div class="identifiants">
+            <h2>Identifiants de test :</h2>
+            <p><strong>Admin :</strong> username = admin | password = admin123</p>
+            <p><strong>Utilisateur :</strong> username = user | password = 12345</p>
+        </div>
+
     </div>
 
     <footer>
-        &copy; 2026 Bibliothèque - Tous droits réservés
+        &copy; VELOSO ALEXIS - Tous droits réservés
     </footer>
+
 </body>
 </html>
