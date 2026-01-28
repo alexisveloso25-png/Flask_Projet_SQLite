@@ -28,7 +28,9 @@
             {% if e[2] %}
                 Retourné le {{ e[2] }}
             {% else %}
-                En cours
+                <form action="{{ url_for('retourner_livre', livre_id=e[3]) }}" method="POST">
+                    <button type="submit">Retourner</button>
+                </form>
             {% endif %}
         </td>
     </tr>
