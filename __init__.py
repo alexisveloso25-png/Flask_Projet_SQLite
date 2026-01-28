@@ -183,6 +183,27 @@ def supprimer_livre(livre_id):
     conn.close()
     return redirect(url_for('liste_livres'))
 
+@app.route('/users/ajouter', methods=['GET', 'POST'])
+def ajouter_user():
+    if not est_authentifie() or session.get('role') != 'admin':
+        return "<h3>Accès refusé : admin uniquement</h3>"
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', (username, password, role))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('liste_livres'))
+
+    return render_template('ajouter_user.html')
+
+
 # --------------------------
 # Lancer l'application
 # --------------------------
