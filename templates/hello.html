@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* --- Reset & Base --- */
+/* --- Base & reset --- */
 body, html {
     margin: 0;
     padding: 0;
@@ -19,20 +19,20 @@ body, html {
 header {
     background-color: #1E88E5;
     color: white;
-    padding: 40px 20px;
+    padding: 50px 20px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 header h1 {
     margin: 0;
-    font-size: 2.5em;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    font-size: 3em;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
 }
 
 /* --- Hero Image --- */
 .hero {
     width: 100%;
-    max-height: 400px;
+    max-height: 500px;
     overflow: hidden;
 }
 .hero img {
@@ -40,9 +40,13 @@ header h1 {
     height: auto;
     object-fit: cover;
     filter: brightness(0.8);
+    transition: transform 0.5s ease;
+}
+.hero img:hover {
+    transform: scale(1.05);
 }
 
-/* --- Navigation / Raccourcis --- */
+/* --- Navigation --- */
 nav {
     text-align: center;
     margin: 30px 0;
@@ -53,35 +57,46 @@ nav a {
     background: white;
     font-weight: bold;
     margin: 0 15px;
-    padding: 12px 25px;
-    border-radius: 8px;
+    padding: 15px 30px;
+    border-radius: 12px;
     border: 2px solid #1E88E5;
     transition: all 0.3s;
 }
 nav a:hover {
     background-color: #1E88E5;
     color: white;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* --- Section Info / Identifiants --- */
+/* --- Section identifiants --- */
 .identifiants {
-    max-width: 600px;
-    margin: 40px auto;
+    max-width: 700px;
+    margin: 50px auto;
     background: white;
-    padding: 25px 35px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.identifiants h2 {
-    margin-top: 0;
-    font-size: 1.6em;
-    color: #1E88E5;
+    padding: 30px 40px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
     text-align: center;
 }
+.identifiants h2 {
+    font-size: 2em;
+    color: #1E88E5;
+    margin-bottom: 20px;
+}
 .identifiants p {
-    font-size: 1.1em;
+    font-size: 1.2em;
     margin: 10px 0;
+}
+
+/* --- Footer --- */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #1E88E5;
+    color: white;
+    margin-top: 50px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
 }
 
 /* --- Responsive --- */
@@ -96,7 +111,7 @@ nav a:hover {
 <body>
 
 <header>
-    <h1>Bienvenue à la Bibliothèque</h1>
+    <h1>Bibliothèque Municipale</h1>
 </header>
 
 <div class="hero">
@@ -117,6 +132,10 @@ nav a:hover {
     <p><strong>Administrateur :</strong> username = admin | password = admin123</p>
     <p><strong>Utilisateur :</strong> username = user | password = 12345</p>
 </div>
+
+<footer>
+    &copy; 2026 Bibliothèque Municipale. Tous droits réservés.
+</footer>
 
 </body>
 </html>
