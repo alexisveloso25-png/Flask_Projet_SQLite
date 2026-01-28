@@ -244,7 +244,7 @@ def supprimer_utilisateur(user_id):
     conn.commit()
     conn.close()
     return redirect(url_for('liste_utilisateurs'))
-)
+
 
 
 # --------------------------
