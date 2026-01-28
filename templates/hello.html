@@ -1,53 +1,229 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Accueil - Bibliothèque</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-<style>
-body, html {margin:0;padding:0;font-family:'Roboto',sans-serif;background:#f0f2f5;}
-header {background:#1E88E5;color:white;padding:60px 20px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
-header h1 {margin:0;font-size:3em;text-shadow:1px 1px 4px rgba(0,0,0,0.3);}
-.hero img {width:100%;height:400px;object-fit:cover;filter:brightness(0.8);transition:transform 0.5s ease;}
-.hero img:hover{transform:scale(1.05);}
-nav{text-align:center;margin:30px 0;}
-nav a{text-decoration:none;color:#1E88E5;background:white;font-weight:bold;margin:0 15px;padding:15px 30px;border-radius:12px;border:2px solid #1E88E5;transition:all 0.3s;}
-nav a:hover{background:#1E88E5;color:white;transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,0.2);}
-.identifiants{max-width:700px;margin:50px auto;background:white;padding:30px 40px;border-radius:15px;box-shadow:0 6px 18px rgba(0,0,0,0.15);text-align:center;}
-.identifiants h2{font-size:2em;color:#1E88E5;margin-bottom:20px;}
-.identifiants p{font-size:1.2em;margin:10px 0;}
-footer{text-align:center;padding:20px;background:#1E88E5;color:white;margin-top:50px;box-shadow:0 -2px 8px rgba(0,0,0,0.1);}
-@media(max-width:600px){nav a{display:block;margin:10px auto;}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque Municipale - Accueil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --accent: #60a5fa;
+            --bg: #0f172a;
+            --text: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Arrière-plan animé */
+        .bg-gradient {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, #0f172a, #1e293b, #1e3a8a);
+            background-size: 400% 400%;
+            z-index: -1;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Header & Hero */
+        header {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
+        }
+
+        header p { font-size: 1.2rem; opacity: 0.9; }
+
+        /* Navigation Grid */
+        .container {
+            max-width: 1100px;
+            margin: -50px auto 50px;
+            padding: 20px;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent);
+            box-shadow: 0 15px 45px rgba(37, 99, 235, 0.4);
+        }
+
+        .card h3 { font-size: 1.5rem; margin-bottom: 10px; }
+
+        /* Admin Section */
+        .admin-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
+        }
+        
+        .admin-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Section Identifiants (Test) */
+        .identifiants {
+            margin-top: 80px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border-left: 5px solid var(--primary);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .identifiants h2 { margin-bottom: 15px; color: var(--accent); }
+        .identifiants code {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #fbbf24;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.5rem; }
+            .container { margin-top: -30px; }
+        }
+    </style>
 </head>
 <body>
+
+<div class="bg-gradient"></div>
+
 <header>
-    <h1>Bibliothèque VELOSO</h1>
+    <h1>La Bibliothèque</h1>
+    <p>Le savoir à portée de clic.</p>
 </header>
 
-<div class="hero">
-    <img src="https://cdn.pixabay.com/photo/2016/11/18/16/04/library-1839416_1280.jpg" alt="Bibliothèque">
-</div>
+<div class="container">
+    <div class="nav-grid">
+        <a href="{{ url_for('liste_livres') }}" class="card">
+            <i class="fa-solid fa-book-open"></i>
+            <h3>Explorer les Livres</h3>
+            <p>Consultez notre collection complète.</p>
+        </a>
 
-<nav>
-    <a href="{{ url_for('liste_livres') }}">Livres</a>
-    <a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a>
-    {% if session['role'] == 'admin' %}
-        <a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
-        <a href="{{ url_for('ajouter_user') }}">Ajouter un utilisateur</a>
-    {% endif %}
-</nav>
+        <a href="{{ url_for('mes_emprunts') }}" class="card">
+            <i class="fa-solid fa-bookmark"></i>
+            <h3>Mes Emprunts</h3>
+            <p>Gérez vos lectures en cours.</p>
+        </a>
 
-<div class="identifiants">
-    <h2>Identifiants de test</h2>
-    <p><strong>Administrateur :</strong> username = admin | password = admin123</p>
-    <p><strong>Utilisateur :</strong> username = user | password = 12345</p>
+        {% if session['role'] == 'admin' %}
+        </div> <div class="admin-section">
+            <h2 class="admin-title">Administration</h2>
+            <div class="nav-grid">
+                <a href="{{ url_for('ajouter_livre') }}" class="card">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    <h3>Nouveau Livre</h3>
+                </a>
+                <a href="{{ url_for('ajouter_user') }}" class="card">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <h3>Nouvel Utilisateur</h3>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="identifiants">
+        <h2><i class="fa-solid fa-key"></i> Mode Démo</h2>
+        <p><strong>Admin :</strong> <code>admin</code> / <code>admin123</code></p>
+        <p><strong>User :</strong> <code>user</code> / <code>12345</code></p>
+    </div>
 </div>
 
 <footer>
-    &copy; 2026 Bibliothèque VELOSO Alexis. Tous droits réservés.
+    &copy; 2026 Bibliothèque Municipale. Développé avec passion.
 </footer>
+
 </body>
 </html>
