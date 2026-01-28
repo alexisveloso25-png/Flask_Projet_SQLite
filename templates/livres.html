@@ -2,130 +2,35 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des livres</title>
+    <title>Livres</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 25px 0;
-            margin-bottom: 20px;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 2em;
-        }
-        nav {
-            margin-bottom: 20px;
-        }
-        nav a {
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-            margin: 0 10px;
-            padding: 8px 15px;
-            border: 2px solid #4CAF50;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        nav a:hover {
-            background-color: #4CAF50;
-            color: white;
-        }
-        form.search-form {
-            margin-bottom: 20px;
-        }
-        form.search-form input[type="text"] {
-            padding: 8px;
-            width: 250px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        form.search-form button {
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: 2px solid #4CAF50;
-            background-color: #4CAF50;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        form.search-form button:hover {
-            background-color: #45a049;
-            border-color: #45a049;
-        }
-        table {
-            margin: 0 auto 30px auto;
-            border-collapse: collapse;
-            width: 90%;
-            max-width: 900px;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        td button {
-            padding: 6px 12px;
-            border-radius: 5px;
-            border: 2px solid #4CAF50;
-            background-color: #4CAF50;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            margin: 2px;
-        }
-        td button:hover {
-            background-color: #45a049;
-            border-color: #45a049;
-        }
-        td .unavailable {
-            color: red;
-            font-weight: bold;
-        }
-        .add-book {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-bottom: 30px;
-            border: 2px solid #4CAF50;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .add-book:hover {
-            background-color: #45a049;
-            border-color: #45a049;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; text-align: center; }
+        header { background-color: #2E8B57; color: white; padding: 30px 0; margin-bottom: 20px; }
+        header h1 { margin:0; }
+        nav a { text-decoration:none; color:#2E8B57; margin:0 10px; font-weight:bold; padding:8px 15px; border:2px solid #2E8B57; border-radius:5px; transition:0.3s; }
+        nav a:hover { background:#2E8B57; color:white; }
+        .search-form { margin-bottom: 20px; }
+        .search-form input { padding: 8px; width: 250px; border-radius:5px; border:1px solid #ccc; }
+        .search-form button { padding:8px 15px; border-radius:5px; border:2px solid #2E8B57; background:#2E8B57; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
+        .search-form button:hover { background:#1f5f3b; border-color:#1f5f3b; }
+        table { margin:0 auto; border-collapse:collapse; width:90%; max-width:900px; background:white; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+        th, td { padding:12px 15px; border:1px solid #ddd; }
+        th { background:#2E8B57; color:white; }
+        td button { padding:6px 12px; border-radius:5px; border:2px solid #2E8B57; background:#2E8B57; color:white; font-weight:bold; cursor:pointer; margin:2px; transition:0.3s; }
+        td button:hover { background:#1f5f3b; border-color:#1f5f3b; }
+        .unavailable { color:red; font-weight:bold; }
+        .add-book { display:inline-block; padding:10px 20px; margin:20px auto; border:2px solid #2E8B57; background:#2E8B57; color:white; border-radius:5px; text-decoration:none; font-weight:bold; transition:0.3s; }
+        .add-book:hover { background:#1f5f3b; border-color:#1f5f3b; }
     </style>
 </head>
 <body>
-
-<header>
-    <h1>Liste des livres disponibles</h1>
-</header>
+<header><h1>Livres disponibles</h1></header>
 
 <nav>
     <a href="{{ url_for('hello_world') }}">Accueil</a>
     <a href="{{ url_for('mes_emprunts') }}">Mes emprunts</a>
 </nav>
 
-<!-- Formulaire de recherche -->
 <form class="search-form" method="POST" action="{{ url_for('recherche_livres') }}">
     <input type="text" name="titre" placeholder="Rechercher un livre..." required>
     <button type="submit">Rechercher</button>
@@ -133,11 +38,7 @@
 
 <table>
     <tr>
-        <th>ID</th>
-        <th>Titre</th>
-        <th>Auteur</th>
-        <th>Stock</th>
-        <th>Actions</th>
+        <th>ID</th><th>Titre</th><th>Auteur</th><th>Stock</th><th>Actions</th>
     </tr>
     {% for livre in livres %}
     <tr>
@@ -150,13 +51,11 @@
             <form action="{{ url_for('emprunter_livre', livre_id=livre[0]) }}" method="POST" style="display:inline;">
                 <button type="submit">Emprunter</button>
             </form>
-            {% else %}
-            <span class="unavailable">Indisponible</span>
-            {% endif %}
+            {% else %}<span class="unavailable">Indisponible</span>{% endif %}
 
             {% if session['role'] == 'admin' %}
             <form action="{{ url_for('supprimer_livre', livre_id=livre[0]) }}" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Voulez-vous vraiment supprimer ce livre ?');">Supprimer</button>
+                <button type="submit" onclick="return confirm('Supprimer ce livre ?');">Supprimer</button>
             </form>
             {% endif %}
         </td>
@@ -165,10 +64,7 @@
 </table>
 
 {% if session['role'] == 'admin' %}
-<p>
-    <a class="add-book" href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
-</p>
+<a class="add-book" href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
 {% endif %}
-
 </body>
 </html>
