@@ -177,6 +177,43 @@ def emprunter_livre(livre_id):
     conn.commit()
     conn.close()
     return redirect(url_for('liste_livres'))
+@app.route("/livres/retourner/<int:livre_id>", methods=["POST"])
+def retourner_livre(livre_id):
+    if not est_authentifie():
+        return redirect(url_for("authentification"))
+
+    user_id = session.get("user_id")
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    # Vérifier que l'utilisateur a bien emprunté ce livre
+    cursor.execute("""
+        SELECT id FROM emprunts
+        WHERE user_id = ? AND livre_id = ? AND date_retour IS NULL
+    """, (user_id, livre_id))
+    emprunt = cursor.fetchone()
+
+    if not emprunt:
+        conn.close()
+        return "<h3>Erreur : vous n'avez pas emprunté ce livre ou il est déjà retourné.</h3>"
+
+    # Mettre à jour la date de retour
+    cursor.execute("""
+        UPDATE emprunts
+        SET date_retour = CURRENT_TIMESTAMP
+        WHERE id = ?
+    """, (emprunt[0],))
+
+    # Incrémenter le stock du livre
+    cursor.execute("""
+        UPDATE livres
+        SET stock = stock + 1
+        WHERE id = ?
+    """, (livre_id,))
+
+    conn.commit()
+    conn.close()
+    return redirect(url_for("mes_emprunts"))
 
 @app.route('/mes_emprunts/')
 def mes_emprunts():
