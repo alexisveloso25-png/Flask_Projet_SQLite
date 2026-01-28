@@ -7,42 +7,29 @@ with open('schema.sql') as f:
 
 cur = connection.cursor()
 
-# -------- Clients --------
-clients = [
-    ('DUPONT', 'Emilie', '123, Rue des Lilas, 75001 Paris'),
-    ('LEROUX', 'Lucas', '456, Avenue du Soleil, 31000 Toulouse'),
-    ('MARTIN', 'Amandine', '789, Rue des Érables, 69002 Lyon'),
-    ('TREMBLAY', 'Antoine', '1010, Boulevard de la Mer, 13008 Marseille'),
-    ('LAMBERT', 'Sarah', '222, Avenue de la Liberté, 59000 Lille'),
-    ('GAGNON', 'Nicolas', '456, Boulevard des Cerisiers, 69003 Lyon'),
-    ('DUBOIS', 'Charlotte', '789, Rue des Roses, 13005 Marseille'),
-    ('LEFEVRE', 'Thomas', '333, Rue de la Paix, 75002 Paris')
-]
-for nom, prenom, adresse in clients:
-    cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", (nom, prenom, adresse))
+# ---------------- CLIENTS ----------------
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('DUPONT', 'Emilie', '123, Rue des Lilas, 75001 Paris'))
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('LEROUX', 'Lucas', '456, Avenue du Soleil, 31000 Toulouse'))
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('MARTIN', 'Amandine', '789, Rue des Érables, 69002 Lyon'))
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('TREMBLAY', 'Antoine', '1010, Boulevard de la Mer, 13008 Marseille'))
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('LAMBERT', 'Sarah', '222, Avenue de la Liberté, 59000 Lille'))
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('GAGNON', 'Nicolas', '456, Boulevard des Cerisiers, 69003 Lyon'))
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('DUBOIS', 'Charlotte', '789, Rue des Roses, 13005 Marseille'))
+cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('LEFEVRE', 'Thomas', '333, Rue de la Paix, 75002 Paris'))
 
-# -------- Users --------
-users = [
-    ('admin', 'admin123', 'admin'),
-    ('user', '12345', 'user')
-]
-for username, password, role in users:
-    cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", (username, password, role))
+# ---------------- USERS ----------------
+cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('admin', 'admin123', 'admin'))
+cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('user', '123', 'user'))
+cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('user', '12345', 'user'))
 
-# -------- Livres --------
-livres = [
-    ('Le Petit Prince', 'Antoine de Saint-Exupéry', 5),
-    ('1984', 'George Orwell', 4),
-    ('Les Misérables', 'Victor Hugo', 3),
-    ("Harry Potter à l'école des sorciers", 'J.K. Rowling', 5),
-    ('Le Seigneur des Anneaux', 'J.R.R. Tolkien', 5)
-]
-for titre, auteur, stock in livres:
-    cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", (titre, auteur, stock))
-
-# -------- NE PAS INSERER D'EMPRUNTS ICI --------
-# car il faudrait des user_id et livre_id corrects
+# ---------------- LIVRES ----------------
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Le Petit Prince', 'Antoine de Saint-Exupéry', 5))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('1984', 'George Orwell', 4))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Les Misérables', 'Victor Hugo', 3))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ("Harry Potter à l'école des sorciers", 'J.K. Rowling', 5))
+cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Le Seigneur des Anneaux', 'J.R.R. Tolkien', 5))
 
 connection.commit()
 connection.close()
+
 print("Base de données bibliothèque initialisée !")
