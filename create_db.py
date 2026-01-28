@@ -19,7 +19,7 @@ cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('LEF
 
 # ---------------- USERS ----------------
 cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('admin', 'admin123', 'admin'))
-cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('user', '12345', 'user'))
+cur.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", ('user', '123', 'user'))
 
 # ---------------- LIVRES ----------------
 cur.execute("INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)", ('Le Petit Prince', 'Antoine de Saint-Exupéry', 5))
