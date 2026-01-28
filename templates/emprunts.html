@@ -1,47 +1,49 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Mes emprunts</title>
+<meta charset="UTF-8">
+<title>Mes emprunts</title>
+<style>
+body { font-family: 'Segoe UI', sans-serif; background:#f0f2f5; text-align:center; }
+header { background:#2E8B57; color:white; padding:25px 0; margin-bottom:20px; }
+header h1 { margin:0; }
+nav a { text-decoration:none; color:#2E8B57; margin:0 10px; font-weight:bold; padding:8px 15px; border:2px solid #2E8B57; border-radius:5px; transition:0.3s; }
+nav a:hover { background:#2E8B57; color:white; }
+table { margin:0 auto 30px; border-collapse:collapse; width:90%; max-width:900px; background:white; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+th, td { padding:12px 15px; border:1px solid #ddd; }
+th { background:#2E8B57; color:white; }
+td button { padding:6px 12px; border-radius:5px; border:2px solid #2E8B57; background:#2E8B57; color:white; font-weight:bold; cursor:pointer; margin:2px; }
+td button:hover { background:#1f5f3b; border-color:#1f5f3b; }
+.unreturned { color:red; font-weight:bold; }
+</style>
 </head>
 <body>
+<header><h1>Mes emprunts</h1></header>
 
 <nav>
-    <a href="{{ url_for('hello_world') }}">Accueil</a> |
+    <a href="{{ url_for('hello_world') }}">Accueil</a>
     <a href="{{ url_for('liste_livres') }}">Livres</a>
 </nav>
 
-<h1>Mes livres empruntés</h1>
-
-<table border="1">
-    <tr>
-        <th>Livre</th>
-        <th>Date d'emprunt</th>
-        <th>Statut</th>
-    </tr>
-
-    {% for e in emprunts %}
-    <tr>
-        <td>{{ e[1] }}</td> <!-- titre -->
-        <td>{{ e[2] }}</td> <!-- date emprunt -->
-        <td>
-            {% if e[3] %}
-                Retourné le {{ e[3] }}
-            {% else %}
-                <form action="{{ url_for('retourner_livre', livre_id=e[0]) }}" method="POST">
-                    <button type="submit">Retourner</button>
-                </form>
-            {% endif %}
-        </td>
-    </tr>
-    {% else %}
-    <tr>
-        <td colspan="3">Aucun emprunt</td>
-    </tr>
-    {% endfor %}
+<table>
+<tr><th>Livre</th><th>Date emprunt</th><th>Statut</th></tr>
+{% for e in emprunts %}
+<tr>
+    <td>{{ e[1] }}</td>
+    <td>{{ e[2] }}</td>
+    <td>
+        {% if e[3] %}
+            Retourné le {{ e[3] }}
+        {% else %}
+            <form action="{{ url_for('retourner_livre', livre_id=e[0]) }}" method="POST">
+                <button type="submit">Retourner</button>
+            </form>
+        {% endif %}
+    </td>
+</tr>
+{% else %}
+<tr><td colspan="3">Aucun emprunt</td></tr>
+{% endfor %}
 </table>
-
-<p><a href="{{ url_for('liste_livres') }}">← Retour à la liste des livres</a></p>
-
 </body>
 </html>
