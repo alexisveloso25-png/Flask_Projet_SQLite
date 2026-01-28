@@ -47,6 +47,36 @@ nav a:hover {
     color: white;
 }
 
+/* Formulaire de recherche */
+.search-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.search-container input[type="text"] {
+    padding: 10px;
+    width: 250px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+.search-container button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background-color: #1E88E5;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.search-container button:hover {
+    background-color: #1565C0;
+}
+
+/* Grille des livres */
 .container {
     display: flex;
     flex-wrap: wrap;
@@ -149,6 +179,14 @@ form {
     <a href="{{ url_for('ajouter_livre') }}">Ajouter un livre</a>
     {% endif %}
 </nav>
+
+<!-- Formulaire de recherche -->
+<div class="search-container">
+    <form method="POST" action="{{ url_for('recherche_livres') }}">
+        <input type="text" name="titre" placeholder="Rechercher un livre..." required>
+        <button type="submit">Rechercher</button>
+    </form>
+</div>
 
 <div class="container">
     {% for livre in livres %}
