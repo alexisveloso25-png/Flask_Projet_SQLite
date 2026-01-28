@@ -183,29 +183,73 @@ def supprimer_livre(livre_id):
     conn.close()
     return redirect(url_for('liste_livres'))
 
-@app.route('/users/ajouter', methods=['GET', 'POST'])
-def ajouter_user():
+# --------------------------
+# Gestion des utilisateurs (admin uniquement)
+# --------------------------
+
+@app.route('/utilisateurs/')
+def liste_utilisateurs():
+    if not est_authentifie() or session.get('role') != 'admin':
+        return "<h3>Accès refusé : admin uniquement</h3>"
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, username, role FROM users')
+    utilisateurs = cursor.fetchall()
+    conn.close()
+    return render_template('utilisateurs.html', utilisateurs=utilisateurs)
+
+
+@app.route('/utilisateurs/ajouter', methods=['GET', 'POST'])
+def ajouter_utilisateur():
     if not est_authentifie() or session.get('role') != 'admin':
         return "<h3>Accès refusé : admin uniquement</h3>"
 
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        role = request.form['role']
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
+        role = request.form['role'].strip()
+
+        if not username or not password or role not in ['admin', 'user']:
+            return "<h3>Erreur : données invalides.</h3>"
 
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', (username, password, role))
-        conn.commit()
+        try:
+            cursor.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)',
+                           (username, password, role))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            conn.close()
+            return "<h3>Erreur : ce nom d'utilisateur existe déjà.</h3>"
+
         conn.close()
+        return redirect(url_for('liste_utilisateurs'))
 
-        return redirect(url_for('liste_livres'))
-
-    return render_template('ajouter_user.html')
+    return render_template('ajouter_utilisateur.html')
 
 
-# -------------------------
+@app.route('/utilisateurs/supprimer/<int:user_id>', methods=['POST'])
+def supprimer_utilisateur(user_id):
+    if not est_authentifie() or session.get('role') != 'admin':
+        return "<h3>Accès refusé : admin uniquement</h3>"
+
+    # Ne pas permettre à l'admin courant de se supprimer
+    if user_id == session.get('user_id'):
+        return "<h3>Erreur : impossible de supprimer le compte courant.</h3>"
+
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('liste_utilisateurs'))
+)
+
+
+# --------------------------
 # Lancer l'application
 # --------------------------
+# -------------------------
 if __name__ == "__main__":
     app.run(debug=True)
