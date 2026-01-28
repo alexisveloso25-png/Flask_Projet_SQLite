@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des utilisateurs</title>
+</head>
+<body>
+<h1>Liste des utilisateurs</h1>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nom d'utilisateur</th>
+        <th>Rôle</th>
+        <th>Action</th>
+    </tr>
+    {% for u in utilisateurs %}
+    <tr>
+        <td>{{ u[0] }}</td>
+        <td>{{ u[1] }}</td>
+        <td>{{ u[2] }}</td>
+        <td>
+            {% if u[0] != session['user_id'] %}
+            <form action="{{ url_for('supprimer_utilisateur', user_id=u[0]) }}" method="POST">
+                <button type="submit">Supprimer</button>
+            </form>
+            {% else %}
+            Compte courant
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<p><a href="{{ url_for('ajouter_utilisateur') }}">Ajouter un utilisateur</a></p>
+<p><a href="{{ url_for('liste_livres') }}">← Retour aux livres</a></p>
+</body>
+</html>
