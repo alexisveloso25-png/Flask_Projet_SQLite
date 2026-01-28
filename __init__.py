@@ -204,7 +204,7 @@ def ajouter_user():
     return render_template('ajouter_user.html')
 
 
-# --------------------------
+# -------------------------
 # Lancer l'application
 # --------------------------
 if __name__ == "__main__":
