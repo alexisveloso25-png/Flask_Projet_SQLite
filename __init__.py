@@ -219,7 +219,5 @@ def supprimer_livre(livre_id):
 
 
 
-# --------------------------
-# Lancer l'application
-# --------------------------
 if __name__ == "__main__":
+    app.run(debug=True)
