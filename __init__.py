@@ -185,7 +185,7 @@ def supprimer_livre(livre_id):
 
 # --------------------------
 # Gestion des utilisateurs (admin uniquement)
-# --------------------------
+# -------------------------
 
 @app.route('/utilisateurs/')
 def liste_utilisateurs():
