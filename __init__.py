@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, redirect, url_for, session, Response
+from flask import Flask, render_template, request, redirect, url_for, session, Response
 import sqlite3
 
 app = Flask(__name__)
@@ -30,12 +30,6 @@ def require_user_auth():
 def hello_world():
     return render_template('hello.html')
 
-@app.route('/lecture')
-def lecture():
-    if not est_authentifie():
-        return redirect(url_for('authentification'))
-    return "<h2>Bravo, vous êtes authentifié</h2>"
-
 # --------------------------
 # Authentification avec rôle
 # --------------------------
@@ -61,67 +55,6 @@ def authentification():
             return render_template('formulaire_authentification.html', error=True)
 
     return render_template('formulaire_authentification.html', error=False)
-
-# --------------------------
-# Gestion des clients (existant)
-# --------------------------
-@app.route('/fiche_client/<int:post_id>')
-def Readfiche(post_id):
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM clients WHERE id = ?', (post_id,))
-    data = cursor.fetchall()
-    conn.close()
-    return render_template('read_data.html', data=data)
-
-@app.route('/consultation/')
-def ReadBDD():
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM clients;')
-    data = cursor.fetchall()
-    conn.close()
-    return render_template('read_data.html', data=data)
-
-@app.route('/enregistrer_client', methods=['GET'])
-def formulaire_client():
-    return render_template('formulaire.html')
-
-@app.route('/enregistrer_client', methods=['POST'])
-def enregistrer_client():
-    nom = request.form['nom']
-    prenom = request.form['prenom']
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation/')
-
-@app.route('/fiche_nom/', methods=['GET', 'POST'])
-def fiche_nom():
-    deny = require_user_auth()
-    if deny:
-        return deny
-
-    nom = request.form.get('nom', '').strip() if request.method == 'POST' else request.args.get('nom', '').strip()
-    if not nom:
-        return """
-        <h2>Recherche client par nom</h2>
-        <form method="POST">
-            <label>Nom :</label>
-            <input name="nom" placeholder="Ex: DUPONT" required>
-            <button type="submit">Rechercher</button>
-        </form>
-        <p>Astuce: tu peux aussi utiliser /fiche_nom/?nom=DUPONT</p>
-        """
-
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', (f"%{nom}%",))
-    data = cursor.fetchall()
-    conn.close()
-    return render_template('read_data.html', data=data)
 
 # --------------------------
 # Gestion des livres
@@ -164,29 +97,27 @@ def emprunter_livre(livre_id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
-    # Vérifier le stock
     cursor.execute('SELECT stock FROM livres WHERE id = ?', (livre_id,))
     livre = cursor.fetchone()
     if not livre or livre[0] <= 0:
         conn.close()
         return "<h3>Livre non disponible</h3>"
 
-    # Ajouter emprunt et décrémenter stock
     cursor.execute('INSERT INTO emprunts (user_id, livre_id) VALUES (?, ?)', (user_id, livre_id))
     cursor.execute('UPDATE livres SET stock = stock - 1 WHERE id = ?', (livre_id,))
     conn.commit()
     conn.close()
     return redirect(url_for('liste_livres'))
-@app.route("/livres/retourner/<int:livre_id>", methods=["POST"])
+
+@app.route('/livres/retourner/<int:livre_id>', methods=['POST'])
 def retourner_livre(livre_id):
     if not est_authentifie():
-        return redirect(url_for("authentification"))
+        return redirect(url_for('authentification'))
 
-    user_id = session.get("user_id")
+    user_id = session.get('user_id')
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    # Vérifier que l'utilisateur a bien emprunté ce livre
     cursor.execute("""
         SELECT id FROM emprunts
         WHERE user_id = ? AND livre_id = ? AND date_retour IS NULL
@@ -197,14 +128,12 @@ def retourner_livre(livre_id):
         conn.close()
         return "<h3>Erreur : vous n'avez pas emprunté ce livre ou il est déjà retourné.</h3>"
 
-    # Mettre à jour la date de retour
     cursor.execute("""
         UPDATE emprunts
         SET date_retour = CURRENT_TIMESTAMP
         WHERE id = ?
     """, (emprunt[0],))
 
-    # Incrémenter le stock du livre
     cursor.execute("""
         UPDATE livres
         SET stock = stock + 1
@@ -224,7 +153,7 @@ def mes_emprunts():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT livres.titre, emprunts.date_emprunt, emprunts.date_retour
+        SELECT livres.id, livres.titre, emprunts.date_emprunt, emprunts.date_retour
         FROM emprunts
         JOIN livres ON emprunts.livre_id = livres.id
         WHERE emprunts.user_id = ?
@@ -254,7 +183,8 @@ def supprimer_livre(livre_id):
     conn.close()
     return redirect(url_for('liste_livres'))
 
-
-
+# --------------------------
+# Lancer l'application
+# --------------------------
 if __name__ == "__main__":
     app.run(debug=True)
