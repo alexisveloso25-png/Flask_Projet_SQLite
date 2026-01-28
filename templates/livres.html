@@ -13,6 +13,12 @@
 
 <h1>Liste des livres disponibles</h1>
 
+<!-- Formulaire de recherche -->
+<form method="POST" action="{{ url_for('recherche_livres') }}">
+    <input type="text" name="titre" placeholder="Rechercher un livre..." required>
+    <button type="submit">Rechercher</button>
+</form>
+
 <table border="1">
     <tr>
         <th>ID</th>
