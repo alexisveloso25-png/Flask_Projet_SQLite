@@ -5,124 +5,113 @@
 <title>Accueil - Bibliothèque</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* ===== GLOBAL ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
-    margin: 0;
-    background: #f5f7fa;
+    background-color: #f5f7fa;
     color: #333;
 }
 
+/* ===== HEADER ===== */
 header {
     background: linear-gradient(135deg, #1E88E5, #42A5F5);
     color: white;
-    padding: 40px 20px;
+    padding: 50px 20px;
     text-align: center;
-    position: relative;
-    overflow: hidden;
 }
 
 header h1 {
-    margin: 0;
     font-size: 2.5em;
-    font-weight: 700;
+    margin-bottom: 10px;
 }
 
-.header-img {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    opacity: 0.15;
+header p {
+    font-size: 1.2em;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
+/* ===== IMAGE BANNIERE ===== */
+.banner {
+    width: 90%;
+    max-width: 900px;
+    margin: 25px auto;
+    display: block;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transition: transform 0.3s;
 }
 
-.grid {
+.banner:hover {
+    transform: scale(1.02);
+}
+
+/* ===== NAV CARDS ===== */
+.nav-cards {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    margin: 40px 0;
+    gap: 25px;
 }
 
 .card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
     width: 220px;
-    text-align: center;
-    padding: 25px 15px;
-    transition: transform 0.3s, box-shadow 0.3s;
+    height: 140px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: #1E88E5;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: 0.3s;
     cursor: pointer;
 }
 
 .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-}
-
-.card h3 {
-    margin-top: 15px;
-    font-size: 1.2em;
-    color: #1E88E5;
-}
-
-.card p {
-    font-size: 0.95em;
-    color: #666;
-    margin: 8px 0 0 0;
-}
-
-.card a {
-    display: block;
-    margin-top: 12px;
-    padding: 8px 12px;
-    text-decoration: none;
     background: #1E88E5;
     color: white;
-    font-weight: bold;
-    border-radius: 6px;
-    transition: 0.3s;
-}
-
-.card a:hover {
-    background: #1565C0;
-}
-
-.identifiants {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-    padding: 20px 25px;
-    max-width: 500px;
-    margin: 40px auto;
-    text-align: left;
-    transition: transform 0.3s;
-}
-
-.identifiants:hover {
     transform: translateY(-5px);
 }
 
+/* ===== IDENTIFIANTS ===== */
+.identifiants {
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
 .identifiants h2 {
-    margin-top: 0;
     color: #1E88E5;
+    margin-bottom: 15px;
 }
 
 .identifiants p {
-    margin: 6px 0;
-    font-size: 1.05em;
+    font-size: 1.1em;
+    margin: 8px 0;
+    line-height: 1.4;
 }
 
+/* ===== FOOTER ===== */
 footer {
     text-align: center;
     padding: 20px;
+    margin-top: 40px;
     background: #1E88E5;
     color: white;
-    margin-top: 40px;
+    border-radius: 10px 10px 0 0;
 }
 </style>
 </head>
@@ -130,50 +119,26 @@ footer {
 
 <header>
     <h1>Bienvenue à la Bibliothèque</h1>
-    <img src="https://cdn.pixabay.com/photo/2016/11/18/16/04/library-1839416_1280.jpg" 
-         alt="Bibliothèque" class="header-img">
+    <p>Accédez rapidement aux livres, emprunts et gestion des utilisateurs</p>
 </header>
 
-<div class="container">
+<img src="https://cdn.pixabay.com/photo/2016/11/18/16/04/library-1839416_1280.jpg" 
+     alt="Bibliothèque" class="banner">
 
-    <div class="grid">
-        <div class="card">
-            <h3>Livres</h3>
-            <p>Consultez tous les livres disponibles</p>
-            <a href="{{ url_for('liste_livres') }}">Voir Livres</a>
-        </div>
+<div class="nav-cards">
+    <a href="{{ url_for('liste_livres') }}" class="card">📚 Livres</a>
+    <a href="{{ url_for('mes_emprunts') }}" class="card">📝 Mes emprunts</a>
+    <a href="{{ url_for('ajouter_user') }}" class="card">➕ Ajouter utilisateur</a>
+</div>
 
-        <div class="card">
-            <h3>Mes emprunts</h3>
-            <p>Visualisez vos livres empruntés</p>
-            <a href="{{ url_for('mes_emprunts') }}">Voir Mes Emprunts</a>
-        </div>
-
-        {% if session.get('role') == 'admin' %}
-        <div class="card">
-            <h3>Ajouter un livre</h3>
-            <p>Ajouter un nouveau livre à la bibliothèque</p>
-            <a href="{{ url_for('ajouter_livre') }}">Ajouter Livre</a>
-        </div>
-
-        <div class="card">
-            <h3>Ajouter un utilisateur</h3>
-            <p>Créer un compte utilisateur ou admin</p>
-            <a href="{{ url_for('ajouter_user') }}">Ajouter Utilisateur</a>
-        </div>
-        {% endif %}
-    </div>
-
-    <div class="identifiants">
-        <h2>Identifiants de test :</h2>
-        <p><strong>Admin :</strong> username = admin | password = admin123</p>
-        <p><strong>Utilisateur :</strong> username = user | password = 12345</p>
-    </div>
-
+<div class="identifiants">
+    <h2>Identifiants de test :</h2>
+    <p><strong>Admin :</strong> username = <em>admin</em> | password = <em>admin123</em></p>
+    <p><strong>Utilisateur :</strong> username = <em>user</em> | password = <em>12345</em></p>
 </div>
 
 <footer>
-    &copy; 2026 Bibliothèque - Tous droits réservés
+    &copy; 2026 Bibliothèque
 </footer>
 
 </body>
