@@ -22,13 +22,13 @@
 
     {% for e in emprunts %}
     <tr>
-        <td>{{ e[0] }}</td>
-        <td>{{ e[1] }}</td>
+        <td>{{ e[1] }}</td> <!-- titre -->
+        <td>{{ e[2] }}</td> <!-- date emprunt -->
         <td>
-            {% if e[2] %}
-                Retourné le {{ e[2] }}
+            {% if e[3] %}
+                Retourné le {{ e[3] }}
             {% else %}
-                <form action="{{ url_for('retourner_livre', livre_id=e[3]) }}" method="POST">
+                <form action="{{ url_for('retourner_livre', livre_id=e[0]) }}" method="POST">
                     <button type="submit">Retourner</button>
                 </form>
             {% endif %}
