@@ -406,7 +406,38 @@ def ajouter_user():
 
     return render_template('ajouter_user.html')
 
+@app.route('/tasks-page')
+def tasks_page():
+    # Affiche l'interface tasks.html (celle avec le JS)
+    return render_template('tasks.html')
 
+@app.route('/api/tasks', methods=['GET'])
+def get_tasks_api():
+    conn = get_db()
+    tasks = conn.execute('SELECT * FROM tasks ORDER BY due_date ASC').fetchall()
+    conn.close()
+    # Conversion du résultat SQLite en liste de dictionnaires pour le JSON
+    return jsonify([dict(ix) for ix in tasks])
+
+@app.route('/api/tasks', methods=['POST'])
+def add_task_api():
+    data = request.json
+    conn = get_db()
+    conn.execute(
+        'INSERT INTO tasks (title, description, due_date) VALUES (?, ?, ?)',
+        (data['title'], data['description'], data['due_date'])
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "success"}), 201
+
+@app.route('/api/tasks/<int:id>', methods=['DELETE'])
+def delete_task_api(id):
+    conn = get_db()
+    conn.execute('DELETE FROM tasks WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"status": "deleted"})
 
 
 
