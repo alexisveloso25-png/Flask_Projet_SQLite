@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une Tâche</title>
+</head>
+<body>
+    <h1>Gestionnaire de Tâches</h1>
+    <nav>
+        <a href="index.html">Ajouter une tâche</a>
+    </nav>
+    <hr>
+    <h2>Nouvelle Tâche</h2>
+    <form action="add-task" method="POST">
+        <p>Titre : <input type="text" name="title" required></p>
+        <p>Description : <br><textarea name="description"></textarea></p>
+        <p>Date d'échéance : <input type="date" name="dueDate"></p>
+        <button type="submit">Enregistrer</button>
+    </form>
+</body>
+</html>
