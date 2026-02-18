@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bibliothèque Municipale - Accueil</title>
+    <title>Bibliothèque & Dashboard - Accueil</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,7 +12,7 @@
         :root {
             --primary: #2563eb;
             --secondary: #3b82f6;
-            --accent: #60a5fa;
+            --accent: #10b981; /* Changement vers vert pour le gestionnaire de tâches */
             --bg: #0f172a;
             --text: #f8fafc;
         }
@@ -45,13 +45,13 @@
 
         /* Header & Hero */
         header {
-            height: 60vh;
+            height: 50vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
                         url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80');
             background-size: cover;
             background-position: center;
@@ -61,7 +61,7 @@
         }
 
         header h1 {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -69,27 +69,32 @@
             text-shadow: 2px 4px 10px rgba(0,0,0,0.5);
         }
 
-        header p { font-size: 1.2rem; opacity: 0.9; }
+        .user-welcome {
+            font-weight: 300;
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
 
         /* Navigation Grid */
         .container {
             max-width: 1100px;
-            margin: -50px auto 50px;
+            margin: -60px auto 50px;
             padding: 20px;
         }
 
         .nav-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
+            margin-bottom: 40px;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
+            padding: 35px;
+            border-radius: 24px;
             text-align: center;
             text-decoration: none;
             color: white;
@@ -101,128 +106,132 @@
         }
 
         .card i {
-            font-size: 3rem;
+            font-size: 2.8rem;
             margin-bottom: 15px;
-            color: var(--accent);
+            color: var(--secondary);
         }
+
+        .card.task-card i { color: var(--accent); }
 
         .card:hover {
             transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.15);
-            border-color: var(--accent);
-            box-shadow: 0 15px 45px rgba(37, 99, 235, 0.4);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 45px rgba(37, 99, 235, 0.2);
         }
 
-        .card h3 { font-size: 1.5rem; margin-bottom: 10px; }
+        .card h3 { font-size: 1.4rem; margin-bottom: 8px; }
+        .card p { font-size: 0.9rem; opacity: 0.7; }
 
-        /* Admin Section */
-        .admin-section {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            width: 100%;
-        }
-        
-        .admin-title {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1rem;
+        /* Sections */
+        .section-title {
+            text-align: left;
+            margin: 40px 0 20px;
+            font-size: 0.9rem;
             color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            border-left: 3px solid var(--secondary);
+            padding-left: 15px;
         }
 
-        /* Section Identifiants (Test) */
-        .identifiants {
-            margin-top: 80px;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            border-left: 5px solid var(--primary);
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .identifiants h2 { margin-bottom: 15px; color: var(--accent); }
-        .identifiants code {
+        /* Bouton Auth */
+        .auth-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
             background: rgba(255,255,255,0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: #fbbf24;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
         }
+        .auth-btn:hover { background: #dc3545; border-color: #dc3545; }
 
-        footer {
-            text-align: center;
-            padding: 40px;
-            opacity: 0.6;
-            font-size: 0.9rem;
+        /* Identifiants (Aide) */
+        .help-box {
+            margin-top: 60px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 18px;
+            border: 1px dashed rgba(255,255,255,0.2);
         }
+        .help-box h2 { font-size: 1.1rem; margin-bottom: 10px; color: var(--secondary); }
+        code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; color: #fbbf24; }
+
+        footer { text-align: center; padding: 40px; opacity: 0.5; font-size: 0.8rem; }
 
         /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            header h1 { font-size: 2.5rem; }
-            .container { margin-top: -30px; }
-        }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="bg-gradient"></div>
 
+{% if session['authentifie'] %}
+    <a href="/authentification" class="auth-btn"><i class="fa-solid fa-sign-out-alt"></i> Quitter</a>
+{% else %}
+    <a href="/authentification" class="auth-btn"><i class="fa-solid fa-user"></i> Connexion</a>
+{% endif %}
+
 <header>
-    <h1>La Bibliothèque</h1>
-    <p>Le savoir à portée de clic.</p>
+    {% if session['username'] %}
+        <p class="user-welcome">Ravi de vous revoir, {{ session['username'] }}</p>
+    {% endif %}
+    <h1>Portail Numérique</h1>
+    <p>Bibliothèque & Gestion de Tâches</p>
 </header>
 
 <div class="container">
+    
+    <h2 class="section-title">Services Publics</h2>
     <div class="nav-grid">
         <a href="{{ url_for('liste_livres') }}" class="card">
-            <i class="fa-solid fa-book-open"></i>
-            <h3>Explorer les Livres</h3>
-            <p>Consultez notre collection complète.</p>
+            <i class="fa-solid fa-book-bookmark"></i>
+            <h3>Bibliothèque</h3>
+            <p>Consultez et recherchez des ouvrages dans notre catalogue.</p>
         </a>
 
         <a href="{{ url_for('mes_emprunts') }}" class="card">
-            <i class="fa-solid fa-bookmark"></i>
+            <i class="fa-solid fa-clock-rotate-left"></i>
             <h3>Mes Emprunts</h3>
-            <p>Gérez vos lectures en cours.</p>
+            <p>Suivez vos dates de retour et vos lectures actuelles.</p>
         </a>
 
-        {% if session['role'] == 'admin' %}
-        </div> <div class="admin-section">
-            <h2 class="admin-title">Administration</h2>
-            <div class="nav-grid">
-                <a href="{{ url_for('ajouter_livre') }}" class="card">
-                    <i class="fa-solid fa-plus-circle"></i>
-                    <h3>Nouveau Livre</h3>
-                </a>
-                <a href="{{ url_for('ajouter_user') }}" class="card">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <h3>Nouvel Utilisateur</h3>
-                </a>
-            </div>
-        </div>
-        {% endif %}
+        <a href="{{ url_for('tasks_page') }}" class="card task-card">
+            <i class="fa-solid fa-list-check"></i>
+            <h3>Mes Tâches</h3>
+            <p>Organisez vos projets et vos rappels personnels.</p>
+        </a>
     </div>
 
-    <div class="identifiants">
-        <h2><i class="fa-solid fa-key"></i> Mode Démo</h2>
-        <p><strong>Admin :</strong> <code>admin</code> / <code>admin123</code></p>
-        <p><strong>User :</strong> <code>user</code> / <code>12345</code></p>
+    {% if session['role'] == 'admin' %}
+    <h2 class="section-title">Espace Administration</h2>
+    <div class="nav-grid">
+        <a href="{{ url_for('ajouter_livre') }}" class="card">
+            <i class="fa-solid fa-plus"></i>
+            <h3>Ajouter un Livre</h3>
+        </a>
+        <a href="{{ url_for('ajouter_user') }}" class="card">
+            <i class="fa-solid fa-users-gear"></i>
+            <h3>Gérer les Membres</h3>
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="help-box">
+        <h2><i class="fa-solid fa-circle-info"></i> Accès rapides (Mode Test)</h2>
+        <p>Admin: <code>admin</code> / <code>admin123</code> &nbsp; | &nbsp; User: <code>user</code> / <code>12345</code></p>
     </div>
 </div>
 
 <footer>
-    &copy; 2026 Bibliothèque Municipale. Développé avec passion.
+    &copy; 2026 Aveloso System. Tous droits réservés.
 </footer>
 
 </body>
