@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestionnaire de Tâches Collaboratif</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .task-card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Mini-Gestionnaire de Tâches</h1>
+    
+    <div id="form">
+        <input type="text" id="title" placeholder="Titre de la tâche" required>
+        <input type="text" id="desc" placeholder="Description">
+        <input type="date" id="dueDate">
+        <button onclick="addTask()">Enregistrer</button>
+    </div>
+
+    <hr>
+    <div id="taskList"></div>
+
+    <script>
+        // Charger les tâches depuis la Base 2 via l'API Python
+        async function loadTasks() {
+            const res = await fetch('/api/tasks');
+            const tasks = await res.json();
+            const container = document.getElementById('taskList');
+            container.innerHTML = '';
+            tasks.forEach(t => {
+                container.innerHTML += `
+                    <div class="task-card">
+                        <strong>${t.title}</strong> (Échéance: ${t.due_date})<br>
+                        <p>${t.description}</p>
+                    </div>`;
+            });
+        }
+
+        // Ajouter une tâche
+        async function addTask() {
+            const payload = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('desc').value,
+                due_date: document.getElementById('dueDate').value
+            };
+            await fetch('/api/tasks', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            loadTasks(); // Actualiser la liste
+        }
+
+        loadTasks(); // Appel au chargement de la page
+    </script>
+</body>
+</html>
