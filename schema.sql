@@ -48,3 +48,13 @@ CREATE TABLE emprunts (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(livre_id) REFERENCES livres(id) ON DELETE CASCADE
 );
+
+CREATE TABLE tâches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    titre TEXT NOT NULL,
+    description TEXT,
+    date_echeance DATE,
+    statut INTEGER DEFAULT 0, -- 0 pour en cours, 1 pour terminée
+    id_client INTEGER,
+    FOREIGN KEY (id_client) REFERENCES clients (id)
+);
