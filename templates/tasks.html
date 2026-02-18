@@ -2,35 +2,152 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mes Objectifs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Objectifs | Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; padding: 50px; }
-        .container { width: 100%; max-width: 500px; background: #1e293b; padding: 20px; border-radius: 12px; box-shadow: 0 10px 15px rgba(0,0,0,0.3); }
-        h2 { text-align: center; color: #3b82f6; }
-        
-        .form-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        input { padding: 12px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; }
-        button#add-btn { background: #3b82f6; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; border-radius: 6px; }
-        button#add-btn:hover { background: #2563eb; }
+        :root {
+            --primary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
 
-        .task-list { margin-top: 20px; }
-        .task-item { background: #334155; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .task-item.done span { text-decoration: line-through; color: #94a3b8; }
+        body { 
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 550px; 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* En-tête et Retour */
+        .nav-back { margin-bottom: 20px; }
+        .nav-back a { color: var(--text-dim); text-decoration: none; font-size: 0.9em; transition: color 0.2s; }
+        .nav-back a:hover { color: var(--primary); }
+
+        h2 { text-align: center; font-size: 1.8em; margin-bottom: 10px; letter-spacing: -0.025em; }
+
+        /* Barre de Progression */
+        .stats-container {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        .progress-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; font-size: 0.9em; }
+        .progress-bar { width: 100%; height: 8px; background: #334155; border-radius: 10px; overflow: hidden; }
+        #progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #60a5fa); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Formulaire */
+        .form-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+        input { 
+            padding: 14px; 
+            border-radius: 10px; 
+            border: 1px solid #334155; 
+            background: #0f172a; 
+            color: white; 
+            font-size: 1em;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
         
-        .btns { display: flex; gap: 5px; }
-        .btn-status { background: #10b981; border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
-        .btn-del { background: #ef4444; border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        button#add-btn { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 14px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            border-radius: 10px; 
+            font-size: 1em;
+            transition: transform 0.1s, background 0.2s;
+        }
+        button#add-btn:hover { background: #2563eb; transform: translateY(-1px); }
+        button#add-btn:active { transform: translateY(0); }
+
+        /* Liste des tâches */
+        .task-list { display: flex; flex-direction: column; gap: 12px; }
+        .task-item { 
+            background: rgba(51, 65, 85, 0.4); 
+            padding: 16px; 
+            border-radius: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid rgba(255,255,255,0.03);
+            animation: slideIn 0.3s ease-out;
+            transition: transform 0.2s;
+        }
+        .task-item:hover { transform: scale(1.01); background: rgba(51, 65, 85, 0.6); }
+
+        .task-content { display: flex; flex-direction: column; gap: 4px; }
+        .task-content strong { font-size: 1.05em; }
+        .task-content small { color: var(--text-dim); display: flex; align-items: center; gap: 5px; }
+
+        .task-item.done { border-left: 4px solid var(--success); }
+        .task-item.done strong { text-decoration: line-through; color: var(--text-dim); }
+
+        /* Boutons d'action */
+        .btns { display: flex; gap: 8px; }
+        .btn-action { 
+            width: 38px; height: 38px; 
+            display: flex; align-items: center; justify-content: center; 
+            border: none; border-radius: 8px; cursor: pointer; transition: 0.2s;
+            color: white;
+        }
+        .btn-status { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .btn-status:hover { background: var(--success); color: white; }
+        .btn-del { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .btn-del:hover { background: var(--danger); color: white; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Message vide */
+        .empty-state { text-align: center; padding: 40px 0; color: var(--text-dim); }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="nav-back"><a href="/">← Retour au Portail</a></div>
     <h2>🎯 Mes Objectifs</h2>
     
+    <div class="stats-container">
+        <div class="progress-info">
+            <span>Progression</span>
+            <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div id="progress-fill"></div>
+        </div>
+        <div style="margin-top: 10px; font-size: 0.8em; color: var(--text-dim); text-align: center;">
+            <span id="task-count">0</span> objectif(s) au total
+        </div>
+    </div>
+    
     <div class="form-group">
-        <input type="text" id="taskTitle" placeholder="Quoi faire ?">
+        <input type="text" id="taskTitle" placeholder="Titre de l'objectif (ex: Sport, Lecture...)" maxlength="50">
         <input type="date" id="taskDate">
-        <button id="add-btn" onclick="addNewTask()">Ajouter maintenant</button>
+        <button id="add-btn" onclick="addNewTask()">+ Ajouter à ma liste</button>
     </div>
 
     <div id="taskList" class="task-list">
@@ -38,55 +155,93 @@
 </div>
 
 <script>
-    // 1. Charger les tâches au chargement de la page
     window.onload = loadTasks;
 
     async function loadTasks() {
-        const response = await fetch('/api/tasks');
-        const tasks = await response.json();
-        const list = document.getElementById('taskList');
-        list.innerHTML = ''; // On vide pour reconstruire
+        try {
+            const response = await fetch('/api/tasks');
+            const tasks = await response.json();
+            const list = document.getElementById('taskList');
+            
+            if (tasks.length === 0) {
+                list.innerHTML = '<div class="empty-state">Aucun objectif pour le moment. Commencez par en ajouter un !</div>';
+                updateStats(0, 0);
+                return;
+            }
 
-        tasks.forEach(task => {
-            const div = document.createElement('div');
-            div.className = `task-item ${task.is_completed ? 'done' : ''}`;
-            div.innerHTML = `
-                <span><strong>${task.title}</strong> <br> <small>${task.due_date}</small></span>
-                <div class="btns">
-                    <button class="btn-status" onclick="toggleTask(${task.id})">✔</button>
-                    <button class="btn-del" onclick="deleteTask(${task.id})">✖</button>
-                </div>
-            `;
-            list.appendChild(div);
-        });
+            list.innerHTML = ''; 
+            let completed = 0;
+
+            tasks.forEach(task => {
+                if (task.is_completed) completed++;
+                
+                const div = document.createElement('div');
+                div.className = `task-item ${task.is_completed ? 'done' : ''}`;
+                div.innerHTML = `
+                    <div class="task-content">
+                        <strong>${task.title}</strong>
+                        <small>📅 ${task.due_date ? formatDate(task.due_date) : 'Pas d\'échéance'}</small>
+                    </div>
+                    <div class="btns">
+                        <button class="btn-action btn-status" title="Changer le statut" onclick="toggleTask(${task.id})">✔</button>
+                        <button class="btn-action btn-del" title="Supprimer" onclick="deleteTask(${task.id})">✖</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+
+            updateStats(completed, tasks.length);
+        } catch (e) {
+            console.error("Erreur chargement:", e);
+        }
     }
 
-    // 2. Ajouter une tâche
-    async function addNewTask() {
-        const title = document.getElementById('taskTitle').value;
-        const date = document.getElementById('taskDate').value;
+    function updateStats(done, total) {
+        const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+        document.getElementById('progress-fill').style.width = percent + '%';
+        document.getElementById('progress-percent').innerText = percent + '%';
+        document.getElementById('task-count').innerText = total;
+    }
 
-        if(!title) return alert("Mets un titre !");
+    function formatDate(dateStr) {
+        const options = { day: 'numeric', month: 'short' };
+        return new Date(dateStr).toLocaleDateString('fr-FR', options);
+    }
+
+    async function addNewTask() {
+        const titleInput = document.getElementById('taskTitle');
+        const dateInput = document.getElementById('taskDate');
+
+        if(!titleInput.value.trim()) return alert("Veuillez donner un titre à votre objectif.");
+
+        const btn = document.getElementById('add-btn');
+        btn.innerText = "Ajout...";
+        btn.disabled = true;
 
         await fetch('/api/tasks', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ title: title, due_date: date })
+            body: JSON.stringify({ 
+                title: titleInput.value, 
+                due_date: dateInput.value,
+                description: "" 
+            })
         });
 
-        document.getElementById('taskTitle').value = ''; // On vide le champ
-        loadTasks(); // On rafraîchit la liste visuelle
+        titleInput.value = '';
+        dateInput.value = '';
+        btn.innerText = "+ Ajouter à ma liste";
+        btn.disabled = false;
+        loadTasks();
     }
 
-    // 3. Cocher/Décocher
     async function toggleTask(id) {
         await fetch(`/api/tasks/${id}/toggle`, { method: 'POST' });
         loadTasks();
     }
 
-    // 4. Supprimer
     async function deleteTask(id) {
-        if(confirm("Supprimer ?")) {
+        if(confirm("Voulez-vous vraiment supprimer cet objectif ?")) {
             await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
             loadTasks();
         }
