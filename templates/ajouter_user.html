@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration - Nouvel Utilisateur</title>
+    <title>Administration - Gestion des Membres</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,9 +26,9 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
+            flex-direction: column; /* Permet le scroll vertical */
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            padding: 40px 20px;
         }
 
         /* Background animé global */
@@ -51,7 +51,7 @@
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             width: 100%;
-            max-width: 480px;
+            max-width: 600px; /* Un peu plus large pour la liste */
             padding: 40px;
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -64,7 +64,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Navigation miniature en haut de la carte */
         .mini-nav {
             display: flex;
             justify-content: center;
@@ -102,10 +101,7 @@
             gap: 12px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
+        .form-group { margin-bottom: 20px; }
         label {
             display: block;
             font-size: 0.8rem;
@@ -116,17 +112,13 @@
             letter-spacing: 1px;
         }
 
-        .input-wrapper {
-            position: relative;
-        }
-
+        .input-wrapper { position: relative; }
         .input-wrapper i {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: rgba(255, 255, 255, 0.3);
-            transition: 0.3s;
         }
 
         input, select {
@@ -138,38 +130,23 @@
             color: white;
             font-size: 1rem;
             font-family: inherit;
-            transition: all 0.3s ease;
-            appearance: none; /* Pour styliser le select proprement */
-        }
-
-        select {
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 15px center;
-            background-size: 15px;
+            transition: 0.3s;
+            appearance: none;
         }
 
         input:focus, select:focus {
             outline: none;
             background: rgba(255, 255, 255, 0.1);
             border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.2);
-        }
-
-        input:focus + i {
-            color: var(--accent);
         }
 
         button {
             width: 100%;
-            margin-top: 20px;
             padding: 16px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 14px;
-            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             transition: 0.4s;
@@ -177,20 +154,53 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
         }
 
         button:hover {
-            background: #1d4ed8;
             transform: translateY(-3px);
             box-shadow: 0 15px 30px rgba(37, 99, 235, 0.5);
         }
 
-        option {
-            background: var(--bg);
-            color: white;
+        /* Styles pour la liste des membres */
+        .members-list {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .members-list h2 {
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .user-info { display: flex; flex-direction: column; }
+        .user-name { font-weight: 600; color: #fff; }
+        .user-role { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            color: var(--accent);
+            letter-spacing: 0.5px;
+        }
+
+        .badge-admin { color: #f87171; } /* Rouge pour admin */
+        .badge-user { color: #60a5fa; }  /* Bleu pour user */
+
+        option { background: #1e293b; }
     </style>
 </head>
 <body>
@@ -203,7 +213,7 @@
         <a href="{{ url_for('liste_livres') }}"><i class="fa-solid fa-book"></i> Livres</a>
     </nav>
 
-    <h1><i class="fa-solid fa-user-shield"></i> Accès Membre</h1>
+    <h1><i class="fa-solid fa-user-shield"></i> Administration</h1>
 
     <form method="POST">
         <div class="form-group">
@@ -238,6 +248,26 @@
             <i class="fa-solid fa-user-plus"></i>
         </button>
     </form>
+
+    <div class="members-list">
+        <h2><i class="fa-solid fa-users"></i> Membres du personnel</h2>
+        
+        {% if users %}
+            {% for user in users %}
+            <div class="user-item">
+                <div class="user-info">
+                    <span class="user-name">{{ user.username }}</span>
+                    <span class="user-role badge-{{ user.role }}">{{ user.role }}</span>
+                </div>
+                <div class="user-id" style="font-size: 0.7rem; color: rgba(255,255,255,0.2);">
+                    ID: #0{{ user.id }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; font-size: 0.8rem; color: #94a3b8;">Aucun membre enregistré.</p>
+        {% endif %}
+    </div>
 </div>
 
 </body>
