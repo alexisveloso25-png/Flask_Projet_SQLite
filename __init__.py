@@ -1,17 +1,34 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Response
+from flask import Flask, render_template, request, redirect, url_for, session, Response, jsonify
 import sqlite3
+import mysql.connector
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Ta clé secrète
 
 # --------------------------
-# Fonctions d'authentification
+# CONFIGURATION DES BASES
+# --------------------------
+
+# Base 1 : SQLite (Bibliothèque)
+def get_db_library():
+    return sqlite3.connect('database.db')
+
+# Base 2 : MySQL Alwaysdata (Gestionnaire de Tâches)
+def get_db_tasks():
+    return mysql.connector.connect(
+        host="mysql-aveloso.alwaysdata.net",
+        user="aveloso",
+        password="Favanola250505..",
+        database="aveloso_db"
+    )
+
+# --------------------------
+# FONCTIONS D'AUTHENTIFICATION
 # --------------------------
 def est_authentifie():
     return session.get('authentifie')
 
 def require_user_auth():
-    """Protection Basic Auth user/12345 (ancienne fonction)"""
     USER_LOGIN = "user"
     USER_PASSWORD = "12345"
     auth = request.authorization
@@ -24,22 +41,19 @@ def require_user_auth():
     return None
 
 # --------------------------
-# Routes de base
+# ROUTES DE BASE & AUTH
 # --------------------------
 @app.route('/')
 def hello_world():
     return render_template('hello.html')
 
-# --------------------------
-# Authentification avec rôle
-# --------------------------
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
-        conn = sqlite3.connect('database.db')
+        conn = get_db_library()
         cursor = conn.cursor()
         cursor.execute("SELECT id, username, role FROM users WHERE username=? AND password=?", (username, password))
         user = cursor.fetchone()
@@ -57,13 +71,13 @@ def authentification():
     return render_template('formulaire_authentification.html', error=False)
 
 # --------------------------
-# Gestion des livres
+# GESTION DES LIVRES (SQLite)
 # --------------------------
 @app.route('/livres/')
 def liste_livres():
     if not est_authentifie():
         return redirect(url_for('authentification'))
-    conn = sqlite3.connect('database.db')
+    conn = get_db_library()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM livres')
     livres = cursor.fetchall()
@@ -74,35 +88,30 @@ def liste_livres():
 def ajouter_livre():
     if not est_authentifie() or session.get('role') != 'admin':
         return "<h3>Accès refusé : admin uniquement</h3>"
-
     if request.method == 'POST':
         titre = request.form['titre']
         auteur = request.form['auteur']
         stock = int(request.form['stock'])
-        conn = sqlite3.connect('database.db')
+        conn = get_db_library()
         cursor = conn.cursor()
         cursor.execute('INSERT INTO livres (titre, auteur, stock) VALUES (?, ?, ?)', (titre, auteur, stock))
         conn.commit()
         conn.close()
         return redirect(url_for('liste_livres'))
-
     return render_template('ajouter_livre.html')
 
 @app.route('/livres/emprunter/<int:livre_id>', methods=['POST'])
 def emprunter_livre(livre_id):
     if not est_authentifie():
         return redirect(url_for('authentification'))
-
     user_id = session.get('user_id')
-    conn = sqlite3.connect('database.db')
+    conn = get_db_library()
     cursor = conn.cursor()
-
     cursor.execute('SELECT stock FROM livres WHERE id = ?', (livre_id,))
     livre = cursor.fetchone()
     if not livre or livre[0] <= 0:
         conn.close()
         return "<h3>Livre non disponible</h3>"
-
     cursor.execute('INSERT INTO emprunts (user_id, livre_id) VALUES (?, ?)', (user_id, livre_id))
     cursor.execute('UPDATE livres SET stock = stock - 1 WHERE id = ?', (livre_id,))
     conn.commit()
@@ -111,46 +120,26 @@ def emprunter_livre(livre_id):
 
 @app.route('/livres/retourner/<int:livre_id>', methods=['POST'])
 def retourner_livre(livre_id):
-    if not est_authentifie():
-        return redirect(url_for('authentification'))
-
+    if not est_authentifie(): return redirect(url_for('authentification'))
     user_id = session.get('user_id')
-    conn = sqlite3.connect("database.db")
+    conn = get_db_library()
     cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT id FROM emprunts
-        WHERE user_id = ? AND livre_id = ? AND date_retour IS NULL
-    """, (user_id, livre_id))
+    cursor.execute("SELECT id FROM emprunts WHERE user_id=? AND livre_id=? AND date_retour IS NULL", (user_id, livre_id))
     emprunt = cursor.fetchone()
-
     if not emprunt:
         conn.close()
-        return "<h3>Erreur : vous n'avez pas emprunté ce livre ou il est déjà retourné.</h3>"
-
-    cursor.execute("""
-        UPDATE emprunts
-        SET date_retour = CURRENT_TIMESTAMP
-        WHERE id = ?
-    """, (emprunt[0],))
-
-    cursor.execute("""
-        UPDATE livres
-        SET stock = stock + 1
-        WHERE id = ?
-    """, (livre_id,))
-
+        return "<h3>Erreur de retour</h3>"
+    cursor.execute("UPDATE emprunts SET date_retour=CURRENT_TIMESTAMP WHERE id=?", (emprunt[0],))
+    cursor.execute("UPDATE livres SET stock=stock+1 WHERE id=?", (livre_id,))
     conn.commit()
     conn.close()
     return redirect(url_for("mes_emprunts"))
 
 @app.route('/mes_emprunts/')
 def mes_emprunts():
-    if not est_authentifie():
-        return redirect(url_for('authentification'))
-
+    if not est_authentifie(): return redirect(url_for('authentification'))
     user_id = session.get('user_id')
-    conn = sqlite3.connect('database.db')
+    conn = get_db_library()
     cursor = conn.cursor()
     cursor.execute("""
         SELECT livres.id, livres.titre, emprunts.date_emprunt, emprunts.date_retour
@@ -165,7 +154,7 @@ def mes_emprunts():
 @app.route('/livres/recherche', methods=['GET','POST'])
 def recherche_livres():
     titre = request.form.get('titre') if request.method == 'POST' else request.args.get('titre')
-    conn = sqlite3.connect('database.db')
+    conn = get_db_library()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM livres WHERE titre LIKE ?', (f"%{titre}%",))
     livres = cursor.fetchall()
@@ -174,9 +163,8 @@ def recherche_livres():
 
 @app.route('/livres/supprimer/<int:livre_id>', methods=['POST'])
 def supprimer_livre(livre_id):
-    if session.get('role') != 'admin':
-        return "<h3>Accès refusé : admin uniquement</h3>"
-    conn = sqlite3.connect('database.db')
+    if session.get('role') != 'admin': return "<h3>Accès refusé</h3>"
+    conn = get_db_library()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM livres WHERE id = ?', (livre_id,))
     conn.commit()
@@ -185,27 +173,62 @@ def supprimer_livre(livre_id):
 
 @app.route('/users/ajouter', methods=['GET', 'POST'])
 def ajouter_user():
-    if not est_authentifie() or session.get('role') != 'admin':
-        return "<h3>Accès refusé : admin uniquement</h3>"
-
+    if not est_authentifie() or session.get('role') != 'admin': return "<h3>Accès refusé</h3>"
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        role = request.form['role']
-
-        conn = sqlite3.connect('database.db')
+        username, password, role = request.form['username'], request.form['password'], request.form['role']
+        conn = get_db_library()
         cursor = conn.cursor()
         cursor.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', (username, password, role))
         conn.commit()
         conn.close()
-
         return redirect(url_for('liste_livres'))
-
     return render_template('ajouter_user.html')
 
+# --------------------------
+# GESTIONNAIRE DE TÂCHES (MySQL API pour JS)
+# --------------------------
+
+@app.route('/tasks-page')
+def tasks_page():
+    # Cette route affiche l'interface JS
+    return render_template('tasks.html')
+
+@app.route('/api/tasks', methods=['GET'])
+def get_tasks_api():
+    conn = get_db_tasks()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM tasks ORDER BY due_date ASC")
+    tasks = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(tasks)
+
+@app.route('/api/tasks', methods=['POST'])
+def add_task_api():
+    data = request.json
+    conn = get_db_tasks()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO tasks (title, description, due_date) VALUES (%s, %s, %s)",
+        (data['title'], data['description'], data['due_date'])
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({"status": "success"}), 201
+
+@app.route('/api/tasks/<int:id>', methods=['DELETE'])
+def delete_task_api(id):
+    conn = get_db_tasks()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM tasks WHERE id = %s", (id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({"status": "deleted"})
 
 # --------------------------
-# Lancer l'application
+# LANCEMENT
 # --------------------------
 if __name__ == "__main__":
     app.run(debug=True)
