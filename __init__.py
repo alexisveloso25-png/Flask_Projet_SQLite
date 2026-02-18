@@ -406,38 +406,24 @@ def ajouter_user():
 
     return render_template('ajouter_user.html')
 
-@app.route('/tasks-page')
-def tasks_page():
-    # Affiche l'interface tasks.html (celle avec le JS)
-    return render_template('tasks.html')
-
 @app.route('/api/tasks', methods=['GET'])
 def get_tasks_api():
-    conn = get_db()
-    tasks = conn.execute('SELECT * FROM tasks ORDER BY due_date ASC').fetchall()
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    # On récupère tout, y compris la colonne is_completed
+    rows = conn.execute('SELECT * FROM tasks ORDER BY is_completed ASC, id DESC').fetchall()
     conn.close()
-    # Conversion du résultat SQLite en liste de dictionnaires pour le JSON
-    return jsonify([dict(ix) for ix in tasks])
+    return jsonify([dict(row) for row in rows])
 
-@app.route('/api/tasks', methods=['POST'])
-def add_task_api():
-    data = request.json
-    conn = get_db()
-    conn.execute(
-        'INSERT INTO tasks (title, description, due_date) VALUES (?, ?, ?)',
-        (data['title'], data['description'], data['due_date'])
-    )
+# Nouvelle route pour changer l'état (terminé ou non)
+@app.route('/api/tasks/<int:id>/toggle', methods=['POST'])
+def toggle_task(id):
+    conn = sqlite3.connect('database.db')
+    # On inverse la valeur de is_completed (0 devient 1, 1 devient 0)
+    conn.execute('UPDATE tasks SET is_completed = 1 - is_completed WHERE id = ?', (id,))
     conn.commit()
     conn.close()
-    return jsonify({"status": "success"}), 201
-
-@app.route('/api/tasks/<int:id>', methods=['DELETE'])
-def delete_task_api(id):
-    conn = get_db()
-    conn.execute('DELETE FROM tasks WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    return jsonify({"status": "deleted"})
+    return jsonify({"status": "updated"})
 
 
 
