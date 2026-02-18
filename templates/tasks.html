@@ -3,199 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionnaire de Tâches - Alwaysdata</title>
+    <title>Mes Tâches - Portail Numérique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* --- STYLE CSS --- */
+        :root {
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --accent: #10b981;
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.07);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            padding: 40px;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Arrière-plan animé identique à l'accueil */
+        .bg-gradient {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, #0f172a, #1e293b, #1e3a8a);
+            background-size: 400% 400%;
+            z-index: -1;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
-            background: white;
             width: 100%;
-            max-width: 600px;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin-top: 50px;
+            animation: fadeInUp 0.8s ease-out;
         }
 
-        h1 { color: #333; text-align: center; }
-        
-        .nav-link {
-            display: block;
+        h1 {
             text-align: center;
-            margin-bottom: 20px;
-            color: #007bff;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: var(--secondary);
             text-decoration: none;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            font-weight: 300;
+        }
+
+        .nav-link:hover { color: white; transform: translateX(-5px); }
+
+        /* Formulaire stylisé en Glassmorphism */
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
         }
 
         input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 15px;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
         }
 
-        button.btn-add {
-            background-color: #28a745;
+        input:focus { border-color: var(--secondary); background: rgba(255, 255, 255, 0.1); }
+
+        .btn-add {
+            background: var(--secondary);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 5px;
+            padding: 0 25px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: 0.3s;
         }
 
-        button.btn-add:hover { background-color: #218838; }
+        .btn-add:hover { background: var(--primary); transform: scale(1.05); }
 
-        .task-list { margin-top: 20px; }
-
+        /* Liste des tâches */
         .task-item {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            transition: background 0.2s;
+            transition: 0.3s;
         }
 
-        .task-item:hover { background-color: #fafafa; }
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.01);
+        }
 
-        .task-info strong { display: block; color: #333; font-size: 1.1em; }
-        .task-info span { color: #666; font-size: 0.9em; }
-        .task-info small { color: #999; }
+        .task-info strong { font-size: 1.2rem; color: var(--secondary); display: block; }
+        .task-info p { font-size: 0.9rem; opacity: 0.8; margin: 5px 0; }
+        .task-info small { color: var(--accent); font-weight: 600; }
 
         .btn-delete {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff4d4d;
+            border: 1px solid rgba(220, 53, 69, 0.4);
+            padding: 10px 15px;
+            border-radius: 10px;
             cursor: pointer;
+            transition: 0.3s;
         }
 
-        .btn-delete:hover { background-color: #c82333; }
+        .btn-delete:hover { background: #dc3545; color: white; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .form-group { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📝 Mes Tâches</h1>
-    <a href="/" class="nav-link">← Retour à la Bibliothèque</a>
+<div class="bg-gradient"></div>
 
-    <div class="form-group">
-        <input type="text" id="taskTitle" placeholder="Titre de la tâche (ex: Finir projet)" required>
-        <input type="text" id="taskDesc" placeholder="Description courte">
-        <input type="date" id="taskDate">
-        <button class="btn-add" onclick="addTask()">Ajouter la tâche</button>
+<div class="container">
+    <a href="/" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Retour au portail</a>
+    
+    <h1><i class="fa-solid fa-list-check"></i> Mes Objectifs</h1>
+    <p style="text-align: center; opacity: 0.6; margin-bottom: 40px;">Gérez vos tâches quotidiennes en toute simplicité.</p>
+
+    <div class="glass-panel">
+        <div class="form-group">
+            <input type="text" id="taskTitle" placeholder="Titre de la tâche..." required>
+            <input type="text" id="taskDesc" placeholder="Description courte">
+            <input type="date" id="taskDate">
+        </div>
+        <button class="btn-add" onclick="addTask()" style="width: 100%; margin-top: 15px; height: 45px;">
+            <i class="fa-solid fa-plus"></i> Ajouter à la liste
+        </button>
     </div>
 
-    <div id="taskList" class="task-list">
+    <div id="taskList">
         </div>
 </div>
 
 <script>
-    /* --- LOGIQUE JAVASCRIPT --- */
-
-    // 1. Charger les tâches au chargement de la page
     document.addEventListener('DOMContentLoaded', loadTasks);
 
     async function loadTasks() {
-        try {
-            const response = await fetch('/api/tasks');
-            const tasks = await response.json();
-            
-            const listContainer = document.getElementById('taskList');
-            listContainer.innerHTML = ''; // On vide la liste avant de remplir
+        const response = await fetch('/api/tasks');
+        const tasks = await response.json();
+        const listContainer = document.getElementById('taskList');
+        listContainer.innerHTML = '';
 
-            if (tasks.length === 0) {
-                listContainer.innerHTML = '<p style="text-align:center; color:#999;">Aucune tâche pour le moment.</p>';
-                return;
-            }
-
-            tasks.forEach(task => {
-                const taskElement = document.createElement('div');
-                taskElement.className = 'task-item';
-                taskElement.innerHTML = `
-                    <div class="task-info">
-                        <strong>${task.title}</strong>
-                        <span>${task.description || 'Pas de description'}</span>
-                        <small>📅 Échéance : ${task.due_date || 'Non définie'}</small>
-                    </div>
-                    <button class="btn-delete" onclick="deleteTask(${task.id})">Supprimer</button>
-                `;
-                listContainer.appendChild(taskElement);
-            });
-        } catch (error) {
-            console.error("Erreur lors du chargement :", error);
+        if (tasks.length === 0) {
+            listContainer.innerHTML = '<p style="text-align:center; opacity:0.5;">Aucune tâche enregistrée.</p>';
+            return;
         }
+
+        tasks.forEach(task => {
+            const div = document.createElement('div');
+            div.className = 'task-item';
+            div.innerHTML = `
+                <div class="task-info">
+                    <strong>${task.title}</strong>
+                    <p>${task.description || 'Aucune description'}</p>
+                    <small><i class="fa-solid fa-calendar-day"></i> Échéance : ${task.due_date || 'ASAP'}</small>
+                </div>
+                <button class="btn-delete" onclick="deleteTask(${task.id})">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            listContainer.appendChild(div);
+        });
     }
 
-    // 2. Ajouter une tâche via l'API POST
     async function addTask() {
         const title = document.getElementById('taskTitle').value;
         const description = document.getElementById('taskDesc').value;
         const dueDate = document.getElementById('taskDate').value;
 
-        if (!title) {
-            alert("Veuillez entrer un titre !");
-            return;
-        }
+        if (!title) return alert("Le titre est requis !");
 
-        const taskData = {
-            title: title,
-            description: description,
-            due_date: dueDate
-        };
+        await fetch('/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, description, due_date: dueDate })
+        });
 
-        try {
-            const response = await fetch('/api/tasks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(taskData)
-            });
-
-            if (response.ok) {
-                // Vider les champs
-                document.getElementById('taskTitle').value = '';
-                document.getElementById('taskDesc').value = '';
-                document.getElementById('taskDate').value = '';
-                // Recharger la liste
-                loadTasks();
-            }
-        } catch (error) {
-            console.error("Erreur lors de l'ajout :", error);
-        }
+        // Clear inputs
+        document.getElementById('taskTitle').value = '';
+        document.getElementById('taskDesc').value = '';
+        document.getElementById('taskDate').value = '';
+        loadTasks();
     }
 
-    // 3. Supprimer une tâche via l'API DELETE
     async function deleteTask(id) {
         if (!confirm("Supprimer cette tâche ?")) return;
-
-        try {
-            const response = await fetch(`/api/tasks/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                loadTasks(); // Recharger la liste
-            }
-        } catch (error) {
-            console.error("Erreur lors de la suppression :", error);
-        }
+        await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+        loadTasks();
     }
 </script>
 
