@@ -170,15 +170,26 @@ def supprimer_livre(livre_id):
 @app.route('/users/ajouter', methods=['GET', 'POST'])
 def ajouter_user():
     if not est_authentifie() or session.get('role') != 'admin':
-        return "<h3>Accès refusé</h3>"
+        return "<h3>Accès refusé : admin uniquement</h3>"
+
+    conn = get_db()
+
     if request.method == 'POST':
-        conn = get_db()
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+        
         conn.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', 
-                     (request.form['username'], request.form['password'], request.form['role']))
+                     (username, password, role))
         conn.commit()
-        conn.close()
-        return redirect(url_for('liste_livres'))
-    return render_template('ajouter_user.html')
+        # On ne redirige pas forcément, on peut rester sur la page pour voir le nouveau membre
+        return redirect(url_for('ajouter_user'))
+
+    # RÉCUPÉRATION DES MEMBRES : On récupère tous les utilisateurs pour les afficher
+    users = conn.execute('SELECT id, username, role FROM users').fetchall()
+    conn.close()
+
+    return render_template('ajouter_user.html', users=users)
 
 # --------------------------
 # GESTION DES TÂCHES (OBJECTIFS)
