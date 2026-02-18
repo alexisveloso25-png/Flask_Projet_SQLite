@@ -36,14 +36,12 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* En-tête et Retour */
         .nav-back { margin-bottom: 20px; }
         .nav-back a { color: var(--text-dim); text-decoration: none; font-size: 0.9em; transition: color 0.2s; }
         .nav-back a:hover { color: var(--primary); }
 
         h2 { text-align: center; font-size: 1.8em; margin-bottom: 10px; letter-spacing: -0.025em; }
 
-        /* Barre de Progression */
         .stats-container {
             background: rgba(15, 23, 42, 0.5);
             padding: 15px;
@@ -54,7 +52,6 @@
         .progress-bar { width: 100%; height: 8px; background: #334155; border-radius: 10px; overflow: hidden; }
         #progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #60a5fa); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Formulaire */
         .form-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
         input { 
             padding: 14px; 
@@ -81,7 +78,6 @@
         button#add-btn:hover { background: #2563eb; transform: translateY(-1px); }
         button#add-btn:active { transform: translateY(0); }
 
-        /* Liste des tâches */
         .task-list { display: flex; flex-direction: column; gap: 12px; }
         .task-item { 
             background: rgba(51, 65, 85, 0.4); 
@@ -96,14 +92,14 @@
         }
         .task-item:hover { transform: scale(1.01); background: rgba(51, 65, 85, 0.6); }
 
-        .task-content { display: flex; flex-direction: column; gap: 4px; }
-        .task-content strong { font-size: 1.05em; }
-        .task-content small { color: var(--text-dim); display: flex; align-items: center; gap: 5px; }
+        .task-content { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; margin-right: 15px; }
+        .task-content strong { font-size: 1.05em; color: var(--text-main); }
+        .task-content p { margin: 0; font-size: 0.9em; color: var(--text-dim); }
+        .task-content small { color: var(--primary); font-weight: 500; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
 
-        .task-item.done { border-left: 4px solid var(--success); }
-        .task-item.done strong { text-decoration: line-through; color: var(--text-dim); }
+        .task-item.done { border-left: 4px solid var(--success); opacity: 0.8; }
+        .task-item.done strong, .task-item.done p { text-decoration: line-through; color: var(--text-dim); }
 
-        /* Boutons d'action */
         .btns { display: flex; gap: 8px; }
         .btn-action { 
             width: 38px; height: 38px; 
@@ -121,7 +117,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Message vide */
         .empty-state { text-align: center; padding: 40px 0; color: var(--text-dim); }
     </style>
 </head>
@@ -146,12 +141,12 @@
     
     <div class="form-group">
         <input type="text" id="taskTitle" placeholder="Titre de l'objectif (ex: Sport, Lecture...)" maxlength="50">
+        <input type="text" id="taskDesc" placeholder="Description courte (optionnel)" maxlength="100">
         <input type="date" id="taskDate">
         <button id="add-btn" onclick="addNewTask()">+ Ajouter à ma liste</button>
     </div>
 
-    <div id="taskList" class="task-list">
-        </div>
+    <div id="taskList" class="task-list"></div>
 </div>
 
 <script>
@@ -164,7 +159,7 @@
             const list = document.getElementById('taskList');
             
             if (tasks.length === 0) {
-                list.innerHTML = '<div class="empty-state">Aucun objectif pour le moment. Commencez par en ajouter un !</div>';
+                list.innerHTML = '<div class="empty-state">Aucun objectif pour le moment.</div>';
                 updateStats(0, 0);
                 return;
             }
@@ -180,6 +175,7 @@
                 div.innerHTML = `
                     <div class="task-content">
                         <strong>${task.title}</strong>
+                        ${task.description ? `<p>${task.description}</p>` : ''}
                         <small>📅 ${task.due_date ? formatDate(task.due_date) : 'Pas d\'échéance'}</small>
                     </div>
                     <div class="btns">
@@ -198,21 +194,26 @@
 
     function updateStats(done, total) {
         const percent = total > 0 ? Math.round((done / total) * 100) : 0;
-        document.getElementById('progress-fill').style.width = percent + '%';
-        document.getElementById('progress-percent').innerText = percent + '%';
-        document.getElementById('task-count').innerText = total;
+        const fill = document.getElementById('progress-fill');
+        if(fill) fill.style.width = percent + '%';
+        const txt = document.getElementById('progress-percent');
+        if(txt) txt.innerText = percent + '%';
+        const count = document.getElementById('task-count');
+        if(count) count.innerText = total;
     }
 
     function formatDate(dateStr) {
+        if(!dateStr) return "";
         const options = { day: 'numeric', month: 'short' };
         return new Date(dateStr).toLocaleDateString('fr-FR', options);
     }
 
     async function addNewTask() {
         const titleInput = document.getElementById('taskTitle');
+        const descInput = document.getElementById('taskDesc');
         const dateInput = document.getElementById('taskDate');
 
-        if(!titleInput.value.trim()) return alert("Veuillez donner un titre à votre objectif.");
+        if(!titleInput.value.trim()) return alert("Veuillez donner un titre.");
 
         const btn = document.getElementById('add-btn');
         btn.innerText = "Ajout...";
@@ -223,12 +224,13 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ 
                 title: titleInput.value, 
-                due_date: dateInput.value,
-                description: "" 
+                description: descInput.value, // Envoi de la description
+                due_date: dateInput.value 
             })
         });
 
         titleInput.value = '';
+        descInput.value = '';
         dateInput.value = '';
         btn.innerText = "+ Ajouter à ma liste";
         btn.disabled = false;
@@ -241,7 +243,7 @@
     }
 
     async function deleteTask(id) {
-        if(confirm("Voulez-vous vraiment supprimer cet objectif ?")) {
+        if(confirm("Supprimer cet objectif ?")) {
             await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
             loadTasks();
         }
