@@ -2,57 +2,202 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gestionnaire de Tâches Collaboratif</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de Tâches - Alwaysdata</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        .task-card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        /* --- STYLE CSS --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 { color: #333; text-align: center; }
+        
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button.btn-add {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button.btn-add:hover { background-color: #218838; }
+
+        .task-list { margin-top: 20px; }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .task-item:hover { background-color: #fafafa; }
+
+        .task-info strong { display: block; color: #333; font-size: 1.1em; }
+        .task-info span { color: #666; font-size: 0.9em; }
+        .task-info small { color: #999; }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-delete:hover { background-color: #c82333; }
     </style>
 </head>
 <body>
-    <h1>Mini-Gestionnaire de Tâches</h1>
-    
-    <div id="form">
-        <input type="text" id="title" placeholder="Titre de la tâche" required>
-        <input type="text" id="desc" placeholder="Description">
-        <input type="date" id="dueDate">
-        <button onclick="addTask()">Enregistrer</button>
+
+<div class="container">
+    <h1>📝 Mes Tâches</h1>
+    <a href="/" class="nav-link">← Retour à la Bibliothèque</a>
+
+    <div class="form-group">
+        <input type="text" id="taskTitle" placeholder="Titre de la tâche (ex: Finir projet)" required>
+        <input type="text" id="taskDesc" placeholder="Description courte">
+        <input type="date" id="taskDate">
+        <button class="btn-add" onclick="addTask()">Ajouter la tâche</button>
     </div>
 
-    <hr>
-    <div id="taskList"></div>
+    <div id="taskList" class="task-list">
+        </div>
+</div>
 
-    <script>
-        // Charger les tâches depuis la Base 2 via l'API Python
-        async function loadTasks() {
-            const res = await fetch('/api/tasks');
-            const tasks = await res.json();
-            const container = document.getElementById('taskList');
-            container.innerHTML = '';
-            tasks.forEach(t => {
-                container.innerHTML += `
-                    <div class="task-card">
-                        <strong>${t.title}</strong> (Échéance: ${t.due_date})<br>
-                        <p>${t.description}</p>
-                    </div>`;
+<script>
+    /* --- LOGIQUE JAVASCRIPT --- */
+
+    // 1. Charger les tâches au chargement de la page
+    document.addEventListener('DOMContentLoaded', loadTasks);
+
+    async function loadTasks() {
+        try {
+            const response = await fetch('/api/tasks');
+            const tasks = await response.json();
+            
+            const listContainer = document.getElementById('taskList');
+            listContainer.innerHTML = ''; // On vide la liste avant de remplir
+
+            if (tasks.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; color:#999;">Aucune tâche pour le moment.</p>';
+                return;
+            }
+
+            tasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item';
+                taskElement.innerHTML = `
+                    <div class="task-info">
+                        <strong>${task.title}</strong>
+                        <span>${task.description || 'Pas de description'}</span>
+                        <small>📅 Échéance : ${task.due_date || 'Non définie'}</small>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(${task.id})">Supprimer</button>
+                `;
+                listContainer.appendChild(taskElement);
             });
+        } catch (error) {
+            console.error("Erreur lors du chargement :", error);
+        }
+    }
+
+    // 2. Ajouter une tâche via l'API POST
+    async function addTask() {
+        const title = document.getElementById('taskTitle').value;
+        const description = document.getElementById('taskDesc').value;
+        const dueDate = document.getElementById('taskDate').value;
+
+        if (!title) {
+            alert("Veuillez entrer un titre !");
+            return;
         }
 
-        // Ajouter une tâche
-        async function addTask() {
-            const payload = {
-                title: document.getElementById('title').value,
-                description: document.getElementById('desc').value,
-                due_date: document.getElementById('dueDate').value
-            };
-            await fetch('/api/tasks', {
+        const taskData = {
+            title: title,
+            description: description,
+            due_date: dueDate
+        };
+
+        try {
+            const response = await fetch('/api/tasks', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskData)
             });
-            loadTasks(); // Actualiser la liste
-        }
 
-        loadTasks(); // Appel au chargement de la page
-    </script>
+            if (response.ok) {
+                // Vider les champs
+                document.getElementById('taskTitle').value = '';
+                document.getElementById('taskDesc').value = '';
+                document.getElementById('taskDate').value = '';
+                // Recharger la liste
+                loadTasks();
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'ajout :", error);
+        }
+    }
+
+    // 3. Supprimer une tâche via l'API DELETE
+    async function deleteTask(id) {
+        if (!confirm("Supprimer cette tâche ?")) return;
+
+        try {
+            const response = await fetch(`/api/tasks/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                loadTasks(); // Recharger la liste
+            }
+        } catch (error) {
+            console.error("Erreur lors de la suppression :", error);
+        }
+    }
+</script>
+
 </body>
 </html>
