@@ -11,7 +11,8 @@
         :root {
             --primary: #2563eb; --accent: #10b981; --bg: #0f172a; --text: #f8fafc;
         }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; }
         
         .bg-gradient {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -43,8 +44,8 @@
         .progress-fill {
             background: linear-gradient(90deg, var(--primary), var(--accent));
             height: 100%;
-            width: 0%; /* Animé par JS */
-            transition: width 0.5s ease-in-out;
+            width: 0%; 
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* --- LISTE --- */
@@ -52,46 +53,66 @@
             background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             border-radius: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .task-card.completed {
-            opacity: 0.5;
+            opacity: 0.6;
             background: rgba(16, 185, 129, 0.1);
         }
 
-        .task-card.completed h3 { text-decoration: line-through; }
+        .task-card.completed h3 { text-decoration: line-through; color: var(--accent); }
 
         .check-btn {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             cursor: pointer;
             color: var(--accent);
             margin-right: 20px;
+            transition: transform 0.2s;
         }
+        .check-btn:hover { transform: scale(1.1); }
 
-        .btn-del { color: #ef4444; cursor: pointer; background: none; border: none; font-size: 1.2rem; }
+        .btn-del { 
+            color: #ef4444; 
+            cursor: pointer; 
+            background: rgba(239, 68, 68, 0.1); 
+            border: none; 
+            padding: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .btn-del:hover { background: #ef4444; color: white; }
 
+        /* --- FORMULAIRE --- */
         .glass-panel {
             background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
+            padding: 25px;
             border-radius: 20px;
             margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px; color: white; border-radius: 8px; margin-bottom: 10px; width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px; color: white; border-radius: 10px; margin-bottom: 12px; width: 100%;
+            outline: none;
         }
+        input:focus { border-color: var(--primary); }
 
         .btn-add {
             width: 100%; background: var(--primary); color: white; border: none; 
-            padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
+            padding: 14px; border-radius: 10px; cursor: pointer; font-weight: bold;
+            font-size: 1rem; transition: 0.3s;
         }
+        .btn-add:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        .nav-link { color: var(--primary); text-decoration: none; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -99,93 +120,151 @@
 <div class="bg-gradient"></div>
 
 <div class="container">
-    <a href="/" style="color: var(--primary); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Retour</a>
+    <div style="margin-bottom: 20px;">
+        <a href="/" class="nav-link"><i class="fa-solid fa-arrow-left"></i> Retour au Portail</a>
+    </div>
     
-    <h1 style="text-align: center; margin: 20px 0;">Gestionnaire de Tâches</h1>
+    <h1 style="text-align: center; margin-bottom: 30px; letter-spacing: 2px;">MES OBJECTIFS</h1>
 
     <div class="progression-card">
-        <h3>Progression Globale : <span id="percent-text">0%</span></h3>
+        <h3>Progression : <span id="percent-text">0%</span></h3>
         <div class="progress-bar-container">
             <div id="progress-fill" class="progress-fill"></div>
         </div>
-        <p id="stat-text">0 tâche terminée sur 0</p>
+        <p id="stat-text" style="font-size: 0.9rem; opacity: 0.8;">Chargement des statistiques...</p>
     </div>
 
     <div class="glass-panel">
-        <input type="text" id="taskTitle" placeholder="Titre de la tâche...">
-        <input type="text" id="taskDesc" placeholder="Description...">
+        <input type="text" id="taskTitle" placeholder="Quel est votre objectif ? (Titre)" required>
+        <input type="text" id="taskDesc" placeholder="Détails (Optionnel)">
         <input type="date" id="taskDate">
-        <button class="btn-add" onclick="addTask()">Ajouter la tâche</button>
+        <button class="btn-add" id="addBtn" onclick="addTask()">
+            <i class="fa-solid fa-plus"></i> Ajouter à la liste
+        </button>
     </div>
 
-    <div id="tasks-container"></div>
+    <div id="tasks-container">
+        </div>
 </div>
 
 <script>
+    // 1. CHARGEMENT DES TÂCHES
     async function loadTasks() {
-        const response = await fetch('/api/tasks');
-        const tasks = await response.json();
-        const container = document.getElementById('tasks-container');
-        container.innerHTML = '';
+        console.log("Chargement des tâches...");
+        try {
+            const response = await fetch('/api/tasks');
+            if (!response.ok) throw new Error("Erreur serveur lors de la récupération");
+            
+            const tasks = await response.json();
+            const container = document.getElementById('tasks-container');
+            container.innerHTML = '';
 
-        let completedCount = 0;
-        
-        tasks.forEach(task => {
-            if (task.is_completed) completedCount++;
+            let completedCount = 0;
+            
+            tasks.forEach(task => {
+                if (task.is_completed) completedCount++;
 
-            const card = document.createElement('div');
-            card.className = `task-card ${task.is_completed ? 'completed' : ''}`;
-            card.innerHTML = `
-                <div style="display: flex; align-items: center;">
-                    <div class="check-btn" onclick="toggleTask(${task.id})">
-                        <i class="fa-regular ${task.is_completed ? 'fa-circle-check' : 'fa-circle'}"></i>
+                const card = document.createElement('div');
+                card.className = `task-card ${task.is_completed ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div class="check-btn" onclick="toggleTask(${task.id})">
+                            <i class="${task.is_completed ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle'}"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin:0; font-size: 1.1rem;">${task.title}</h3>
+                            <p style="margin:0; font-size: 0.85rem; opacity: 0.7;">${task.description || ''}</p>
+                            <small style="color: var(--primary);">${task.due_date ? '📅 ' + task.due_date : ''}</small>
+                        </div>
                     </div>
-                    <div>
-                        <h3 style="margin:0;">${task.title}</h3>
-                        <small>${task.due_date || 'Pas de date'}</small>
-                    </div>
-                </div>
-                <button class="btn-del" onclick="deleteTask(${task.id})"><i class="fa-solid fa-trash"></i></button>
-            `;
-            container.appendChild(card);
-        });
+                    <button class="btn-del" onclick="deleteTask(${task.id})">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
 
-        // CALCUL DU POURCENTAGE
-        const total = tasks.length;
-        const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
-        
-        document.getElementById('progress-fill').style.width = percent + '%';
-        document.getElementById('percent-text').innerText = percent + '%';
-        document.getElementById('stat-text').innerText = `${completedCount} tâche(s) terminée(s) sur ${total}`;
-    }
+            // Mise à jour de la barre de progression
+            const total = tasks.length;
+            const percent = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+            
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('percent-text').innerText = percent + '%';
+            document.getElementById('stat-text').innerText = `${completedCount} objectif(s) atteint(s) sur ${total}`;
 
-    async function addTask() {
-        const title = document.getElementById('taskTitle').value;
-        const desc = document.getElementById('taskDesc').value;
-        const date = document.getElementById('taskDate').value;
-        if (!title) return;
-
-        await fetch('/api/tasks', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, description: desc, due_date: date })
-        });
-        document.getElementById('taskTitle').value = '';
-        loadTasks();
-    }
-
-    async function toggleTask(id) {
-        await fetch(`/api/tasks/${id}/toggle`, { method: 'POST' });
-        loadTasks();
-    }
-
-    async function deleteTask(id) {
-        if (confirm("Supprimer ?")) {
-            await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
-            loadTasks();
+        } catch (error) {
+            console.error("Erreur loadTasks:", error);
+            document.getElementById('tasks-container').innerHTML = `<p style="color:red; text-align:center;">Erreur de connexion aux données.</p>`;
         }
     }
 
+    // 2. AJOUT D'UNE TÂCHE
+    async function addTask() {
+        const titleInput = document.getElementById('taskTitle');
+        const descInput = document.getElementById('taskDesc');
+        const dateInput = document.getElementById('taskDate');
+
+        if (!titleInput.value.trim()) {
+            alert("Veuillez entrer au moins un titre !");
+            return;
+        }
+
+        const btn = document.getElementById('addBtn');
+        btn.disabled = true; // Empêche le double-clic
+        btn.innerHTML = "Envoi en cours...";
+
+        const taskData = {
+            title: titleInput.value,
+            description: descInput.value,
+            due_date: dateInput.value
+        };
+
+        try {
+            const response = await fetch('/api/tasks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskData)
+            });
+
+            if (response.ok) {
+                titleInput.value = '';
+                descInput.value = '';
+                dateInput.value = '';
+                await loadTasks();
+            } else {
+                alert("Le serveur a refusé l'ajout.");
+            }
+        } catch (error) {
+            console.error("Erreur addTask:", error);
+            alert("Problème de connexion.");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-plus"></i> Ajouter à la liste';
+        }
+    }
+
+    // 3. CHANGER L'ÉTAT (TERMINÉ / NON TERMINÉ)
+    async function toggleTask(id) {
+        try {
+            const response = await fetch(`/api/tasks/${id}/toggle`, { method: 'POST' });
+            if (response.ok) loadTasks();
+        } catch (error) {
+            console.error("Erreur toggle:", error);
+        }
+    }
+
+    // 4. SUPPRIMER
+    async function deleteTask(id) {
+        if (!confirm("Supprimer cet objectif ?")) return;
+        try {
+            const response = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+            if (response.ok) loadTasks();
+        } catch (error) {
+            console.error("Erreur delete:", error);
+        }
+    }
+
+    // Démarrage
     document.addEventListener('DOMContentLoaded', loadTasks);
 </script>
 
